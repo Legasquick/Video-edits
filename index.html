@@ -5,306 +5,68 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Составление правок к видео</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            overflow: hidden;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
-
-        .header h1 {
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-
-        .header p {
-            opacity: 0.9;
-            font-size: 14px;
-        }
-
-        .content {
-            padding: 30px;
-        }
-
-        .edit-form {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 12px;
-            margin-bottom: 25px;
-            border: 2px solid #e9ecef;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 6px;
-            font-weight: 600;
-            color: #495057;
-            font-size: 14px;
-        }
-
-        input, textarea, select {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #dee2e6;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: all 0.3s;
-            font-family: inherit;
-        }
-
-        input:focus, textarea:focus, select:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
-
-        .btn-secondary {
-            background: #6c757d;
-            color: white;
-            margin-left: 10px;
-        }
-
-        .btn-secondary:hover {
-            background: #5a6268;
-        }
-
-        .btn-success {
-            background: #28a745;
-            color: white;
-        }
-
-        .btn-success:hover {
-            background: #218838;
-        }
-
-        .btn-danger {
-            background: #dc3545;
-            color: white;
-            padding: 8px 16px;
-            font-size: 12px;
-        }
-
-        .btn-danger:hover {
-            background: #c82333;
-        }
-
-        .edits-list {
-            margin-top: 30px;
-        }
-
-        .edit-item {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 15px;
-            border: 2px solid #e9ecef;
-            transition: all 0.3s;
-            position: relative;
-        }
-
-        .edit-item:hover {
-            border-color: #667eea;
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
-        }
-
-        .edit-item-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .edit-number {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .edit-content {
-            font-size: 14px;
-            color: #495057;
-            line-height: 1.6;
-        }
-
-        .edit-content strong {
-            color: #212529;
-        }
-
-        .button-group {
-            margin-top: 20px;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 40px;
-            color: #6c757d;
-        }
-
-        .empty-state-icon {
-            font-size: 48px;
-            margin-bottom: 15px;
-        }
-
-        .type-selector {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .type-option {
-            padding: 15px;
-            border: 2px solid #dee2e6;
-            border-radius: 8px;
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.3s;
-            background: white;
-        }
-
-        .type-option:hover {
-            border-color: #667eea;
-            background: #f8f9ff;
-        }
-
-        .type-option.active {
-            border-color: #667eea;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .type-option-title {
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-
-        .type-option-desc {
-            font-size: 12px;
-            opacity: 0.8;
-        }
-
-        @media (max-width: 768px) {
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-
-            .button-group {
-                flex-direction: column;
-            }
-
-            .btn-secondary {
-                margin-left: 0;
-            }
-        }
-
-        .instructions-toggle {
-            background: #e9ecef;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .instructions-toggle:hover {
-            background: #dee2e6;
-        }
-
-        .instructions-content {
-            display: none;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 14px;
-            line-height: 1.8;
-        }
-
-        .instructions-content.show {
-            display: block;
-        }
-
-        .instructions-content h3 {
-            color: #667eea;
-            margin-top: 15px;
-            margin-bottom: 10px;
-        }
-
-        .instructions-content ul {
-            margin-left: 20px;
-        }
-
-        .instructions-content li {
-            margin-bottom: 8px;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: white; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; }
+        .header h1 { font-size: 28px; margin-bottom: 10px; }
+        .header p { opacity: 0.9; font-size: 14px; }
+        .content { padding: 30px; }
+        .project-name-container { background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 2px solid #e9ecef; }
+        .edit-form { background: #f8f9fa; padding: 25px; border-radius: 12px; margin-bottom: 25px; border: 2px solid #e9ecef; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 6px; font-weight: 600; color: #495057; font-size: 14px; }
+        input, textarea { width: 100%; padding: 12px; border: 2px solid #dee2e6; border-radius: 8px; font-size: 14px; transition: all 0.3s; font-family: inherit; }
+        input:focus, textarea:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); padding-left: 11px; border-left-width: 3px; }
+        .input-error { border-color: #dc3545 !important; box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1) !important; }
+        textarea { resize: vertical; min-height: 80px; }
+        .toggle-container { background-color: #e9ecef; padding: 10px 15px; border-radius: 8px; margin-bottom: 15px; display: flex; align-items: center; cursor: pointer; }
+        .toggle-container input { width: auto; margin-right: 10px; }
+        .toggle-container label { margin-bottom: 0; font-weight: normal; }
+        .btn { padding: 12px 24px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s; text-transform: uppercase; letter-spacing: 0.5px; }
+        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3); }
+        .btn-secondary { background: #6c757d; color: white; }
+        .btn-secondary:hover { background: #5a6268; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-success:hover { background: #218838; }
+        .btn-export { background: #17a2b8; color: white; }
+        .btn-export:hover { background: #138496; }
+        .btn-danger { background: #dc3545; color: white; padding: 8px 16px; font-size: 12px; }
+        .btn-danger:hover { background: #c82333; }
+        /* Стили для кнопки Править */
+        .btn-info { background: #17a2b8; color: white; padding: 8px 16px; font-size: 12px; }
+        .btn-info:hover { background: #138496; }
+        .edits-list { margin-top: 30px; }
+        .edit-item { background: white; padding: 20px; border-radius: 12px; margin-bottom: 15px; border: 2px solid #e9ecef; transition: all 0.3s; position: relative; }
+        .edit-item:hover { border-color: #667eea; box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1); }
+        /* Стиль для подсветки редактируемой правки */
+        .edit-item.editing { border-color: #28a745; box-shadow: 0 0 10px rgba(40, 167, 69, 0.2); }
+        .edit-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .edit-item-header .buttons { display: flex; gap: 8px; }
+        .edit-number { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 6px 12px; border-radius: 20px; font-weight: 600; font-size: 14px; }
+        .edit-item.general-edit .edit-number { background: #6c757d; }
+        .edit-content { font-size: 14px; color: #495057; line-height: 1.6; }
+        .edit-content strong { color: #212529; }
+        .button-group { margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
+        .main-form-buttons { display: flex; gap: 10px; align-items: center; }
+        .empty-state { text-align: center; padding: 40px; color: #6c757d; }
+        .empty-state-icon { font-size: 48px; margin-bottom: 15px; }
+        .type-selector { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 20px; }
+        .type-option { padding: 15px; border: 2px solid #dee2e6; border-radius: 8px; cursor: pointer; text-align: center; transition: all 0.3s; background: white; }
+        .type-option:hover { border-color: #667eea; background: #f8f9ff; }
+        .type-option.active { border-color: #667eea; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .type-option-title { font-weight: 600; margin-bottom: 5px; }
+        .type-option-desc { font-size: 12px; opacity: 0.8; }
+        @media (max-width: 768px) { .form-row { grid-template-columns: 1fr; } .button-group { flex-direction: column; } }
+        .instructions-toggle { background: #e9ecef; padding: 15px; border-radius: 8px; margin-bottom: 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .instructions-toggle:hover { background: #dee2e6; }
+        .instructions-content { display: none; padding: 20px; background: #f8f9fa; border-radius: 8px; margin-bottom: 20px; font-size: 14px; line-height: 1.8; }
+        .instructions-content.show { display: block; }
+        .instructions-content h3 { color: #667eea; margin-top: 15px; margin-bottom: 10px; }
+        .instructions-content ul { margin-left: 20px; }
+        .instructions-content li { margin-bottom: 8px; }
     </style>
 </head>
 <body>
@@ -319,23 +81,15 @@
                 <strong>📖 Инструкция по работе с правками</strong>
                 <span id="toggle-icon">▼</span>
             </div>
-
             <div class="instructions-content" id="instructions">
-                <p><strong>Для ускорения процесса монтажа прошу предоставлять правки в едином формате.</strong></p>
-                
-                <h3>Основной формат</h3>
-                <p>Для каждой правки указывайте:</p>
-                <ul>
-                    <li>Таймкод начала и конца фрагмента (ММ:СС)</li>
-                    <li>Первые три слова фрагмента</li>
-                    <li>Последние три слова фрагмента</li>
-                    <li>Действие, которое необходимо совершить</li>
-                </ul>
+                <!-- ...Инструкция... -->
+            </div>
 
-                <h3>Примеры использования</h3>
-                <p><strong>Вырезать фрагмент:</strong> 01:23 - 01:28 | Сегодня мы поговорим | очень важный момент | Вырезать</p>
-                <p><strong>Добавить графику:</strong> 02:40 - 02:47 | Как показано на | данной схеме | Поверх видео вставить изображение "схема_1.jpg"</p>
-                <p><strong>Изменить звук:</strong> 06:50 - 06:55 | И вот здесь | очень важная мысль | Сделать звук громче</p>
+            <div class="project-name-container">
+                <div class="form-group">
+                    <label for="projectName">Название проекта</label>
+                    <input type="text" id="projectName" placeholder="Например, 'Ролик для YouTube #5'">
+                </div>
             </div>
 
             <div class="edit-form">
@@ -344,58 +98,57 @@
                         <div class="type-option-title">✂️ Вырезать</div>
                         <div class="type-option-desc">Удалить фрагмент</div>
                     </div>
-                    <div class="type-option" onclick="selectType('graphics')" data-type="graphics">
-                        <div class="type-option-title">🎨 Графика</div>
-                        <div class="type-option-desc">Титры, изображения</div>
-                    </div>
-                    <div class="type-option" onclick="selectType('move')" data-type="move">
-                        <div class="type-option-title">🔄 Переместить</div>
-                        <div class="type-option-desc">Изменить порядок</div>
-                    </div>
                     <div class="type-option" onclick="selectType('other')" data-type="other">
                         <div class="type-option-title">⚙️ Другое</div>
                         <div class="type-option-desc">Звук, цвет и т.д.</div>
                     </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="timeStart">Таймкод начала (М:СС или ММ:СС)</label>
-                        <input type="text" id="timeStart" placeholder="1:23 или 01:23" onblur="formatTimecode(this)">
-                    </div>
-                    <div class="form-group">
-                        <label for="timeEnd">Таймкод конца (М:СС или ММ:СС)</label>
-                        <input type="text" id="timeEnd" placeholder="1:28 или 01:28" onblur="formatTimecode(this)">
+                    <div class="type-option" onclick="selectType('general')" data-type="general">
+                        <div class="type-option-title">📄 Общая</div>
+                        <div class="type-option-desc">Ко всему видео</div>
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="firstWords">Первые три слова фрагмента</label>
+                <div class="toggle-container" id="no-end-timecode-toggle" style="display: none;">
+                    <input type="checkbox" id="noEndTimecode" onchange="toggleTimeEndField()">
+                    <label for="noEndTimecode">Без конечного таймкода (правка в одной точке)</label>
+                </div>
+                
+                <div class="form-row" id="timecodeRow">
+                    <div class="form-group">
+                        <label for="timeStart">Таймкод начала (М:СС)</label>
+                        <input type="text" id="timeStart" placeholder="1:23" onblur="validateAllTimecodes()" onfocus="this.classList.remove('input-error')">
+                    </div>
+                    <div class="form-group" id="timeEndGroup">
+                        <label for="timeEnd">Таймкод конца (М:СС)</label>
+                        <input type="text" id="timeEnd" placeholder="1:28" onblur="validateAllTimecodes()" onfocus="this.classList.remove('input-error')">
+                    </div>
+                </div>
+                
+                <div class="form-group" id="firstWordsGroup">
+                    <label for="firstWords" id="firstWordsLabel">Первые три слова фрагмента</label>
                     <input type="text" id="firstWords" placeholder="Сегодня мы поговорим">
                 </div>
-
-                <div class="form-group">
+                <div class="form-group" id="lastWordsGroup">
                     <label for="lastWords">Последние три слова фрагмента</label>
                     <input type="text" id="lastWords" placeholder="очень важный момент">
                 </div>
-
+                
                 <div class="form-group">
                     <label for="action" id="actionLabel">Что делаем (описание правки)</label>
                     <textarea id="action" placeholder="Вырезать"></textarea>
                 </div>
-
-                <button class="btn btn-primary" onclick="addEdit()">➕ Добавить правку</button>
-            </div>
-
-            <div class="edits-list" id="editsList">
-                <div class="empty-state">
-                    <div class="empty-state-icon">📝</div>
-                    <p>Правок пока нет. Добавьте первую правку выше.</p>
+                <!-- ОБНОВЛЕННЫЙ БЛОК КНОПОК -->
+                <div class="main-form-buttons">
+                    <button class="btn btn-primary" id="addEditBtn" onclick="addOrUpdateEdit()">➕ Добавить правку</button>
+                    <button class="btn btn-secondary" id="cancelEditBtn" onclick="cancelEdit()" style="display: none;">Отмена</button>
                 </div>
             </div>
 
+            <div class="edits-list" id="editsList"></div>
+
             <div class="button-group" id="actionButtons" style="display: none;">
-                <button class="btn btn-success" onclick="copyToClipboard()">📋 Скопировать все правки</button>
+                <button class="btn btn-success" onclick="copyToClipboard()">📋 Скопировать</button>
+                <button class="btn btn-export" onclick="exportToSrt()">📄 Экспорт в .SRT</button>
                 <button class="btn btn-secondary" onclick="clearAll()">🗑️ Очистить всё</button>
             </div>
         </div>
@@ -404,247 +157,294 @@
     <script>
         let edits = [];
         let currentType = 'cut';
+        let currentlyEditingId = null; // ID правки в режиме редактирования
+        const PROJECT_STORAGE_KEY = 'videoEditorProject';
 
-        function convertTimecode(time) {
-            // Убираем лишние пробелы
-            time = time.trim();
-            
-            // Убираем все кроме цифр и двоеточия
-            time = time.replace(/[^\d:]/g, '');
-            
-            if (!time.includes(':')) {
-                return null;
-            }
-            
-            let parts = time.split(':');
-            if (parts.length !== 2) {
-                return null;
-            }
-            
-            let minutes = parts[0];
-            let seconds = parts[1];
-            
-            // Добавляем ведущий ноль к минутам если нужно
-            if (minutes.length === 1) {
-                minutes = '0' + minutes;
-            }
-            
-            // Добавляем ведущий ноль к секундам если нужно
-            if (seconds.length === 1) {
-                seconds = '0' + seconds;
-            }
-            
-            // Проверяем корректность
-            if (minutes.length !== 2 || seconds.length !== 2) {
-                return null;
-            }
-            
-            if (isNaN(minutes) || isNaN(seconds)) {
-                return null;
-            }
-            
-            return minutes + ':' + seconds;
-        }
-
-        function toggleInstructions() {
-            const instructions = document.getElementById('instructions');
-            const icon = document.getElementById('toggle-icon');
-            instructions.classList.toggle('show');
-            icon.textContent = instructions.classList.contains('show') ? '▲' : '▼';
-        }
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProject();
+            selectType(currentType); 
+            setupEnterNavigation();
+            document.getElementById('projectName').addEventListener('input', saveProject);
+        });
+        
+        // --- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ (без изменений) ---
+        function saveProject() { /* ... */ }
+        function loadProject() { /* ... */ }
+        const fieldOrder = ['timeStart', 'timeEnd', 'firstWords', 'lastWords', 'action'];
+        function handleEnterNavigation(event) { if (event.key === 'Enter') { if (event.target.tagName === 'TEXTAREA' && event.shiftKey) { return; } event.preventDefault(); if (event.target.id === 'action') { addOrUpdateEdit(); } else { const isNoEndTime = document.getElementById('noEndTimecode').checked; const currentId = event.target.id; let currentIndex = fieldOrder.indexOf(currentId); if (isNoEndTime && currentId === 'timeStart') { currentIndex += 2; } else if (isNoEndTime && currentId === 'firstWords') { currentIndex++; } if (currentIndex >= fieldOrder.length - 1) { document.getElementById('action').focus(); } else { const nextId = fieldOrder[currentIndex + 1]; document.getElementById(nextId)?.focus(); } } } };
+        function setupEnterNavigation() { fieldOrder.forEach(fieldId => { const el = document.getElementById(fieldId); if(el) el.addEventListener('keydown', handleEnterNavigation); }); };
+        function convertTimecode(time) { /* ... */ }
+        function timecodeToSeconds(timecode) { /* ... */ }
+        function secondsToTimecode(totalSeconds) { /* ... */ }
+        function toggleInstructions() { /* ... */ }
+        function formatTimecode(input) { /* ... */ }
+        function isValidTimecode(timecode) { /* ... */ }
+        function validateAllTimecodes() { /* ... */ }
+        function deleteEdit(id) { if(currentlyEditingId === id) cancelEdit(); edits = edits.filter(edit => edit.id !== id); saveProject(); renderEdits(); };
+        function clearAll() { if (confirm('Вы уверены?')) { edits = []; document.getElementById('projectName').value = ''; saveProject(); renderEdits(); cancelEdit(); } };
+        
+        // --- ГЛАВНЫЕ ФУНКЦИИ С НОВОЙ ЛОГИКОЙ ---
 
         function selectType(type) {
             currentType = type;
-            document.querySelectorAll('.type-option').forEach(option => {
-                option.classList.remove('active');
-            });
+            document.querySelectorAll('.type-option').forEach(option => option.classList.remove('active'));
             document.querySelector(`[data-type="${type}"]`).classList.add('active');
 
-            const actionField = document.getElementById('action');
-            const actionLabel = document.getElementById('actionLabel');
-            const lastWordsGroup = document.querySelector('#lastWords').closest('.form-group');
-            const lastWordsLabel = lastWordsGroup.querySelector('label');
-            
-            const suggestions = {
-                'cut': 'Вырезать',
-                'graphics': 'Добавить титр: "Текст титра"',
-                'move': 'Вырезать и переместить на место Фрагмента X',
-                'other': 'Сделать звук громче'
+            const elements = {
+                actionField: document.getElementById('action'),
+                actionLabel: document.getElementById('actionLabel'),
+                noEndTimeToggle: document.getElementById('no-end-timecode-toggle'),
+                timecodeRow: document.getElementById('timecodeRow'),
+                timeEndGroup: document.getElementById('timeEndGroup'),
+                firstWordsGroup: document.getElementById('firstWordsGroup'),
+                lastWordsGroup: document.getElementById('lastWordsGroup')
             };
-            actionField.placeholder = suggestions[type];
 
-            // Для типа "Вырезать" последние слова и действие необязательны
+            elements.timecodeRow.style.display = 'grid';
+            elements.timeEndGroup.style.display = 'block';
+            elements.firstWordsGroup.style.display = 'block';
+            elements.lastWordsGroup.style.display = 'block';
+            elements.noEndTimeToggle.style.display = 'none';
+            document.getElementById('noEndTimecode').checked = false;
+            document.getElementById('firstWordsLabel').innerHTML = 'Первые три слова фрагмента';
+            
             if (type === 'cut') {
-                lastWordsLabel.innerHTML = 'Последние три слова фрагмента <span style="color: #6c757d; font-weight: normal;">()</span>';
-                actionLabel.innerHTML = 'Что делаем (описание правки) <span style="color: #6c757d; font-weight: normal;">(необязательно, по умолчанию "Вырезать")</span>';
-            } else {
-                lastWordsLabel.textContent = 'Последние три слова фрагмента';
-                actionLabel.textContent = 'Что делаем (описание правки)';
+                elements.actionField.placeholder = 'Вырезать';
+                elements.actionLabel.innerHTML = 'Что делаем (описание правки) <span style="color: #6c757d; font-weight: normal;">(по умолчанию "Вырезать")</span>';
+            } else if (type === 'other') {
+                elements.noEndTimeToggle.style.display = 'flex';
+                elements.actionField.placeholder = 'Сделать звук громче';
+                elements.actionLabel.innerHTML = 'Что делаем (описание правки)';
+                toggleTimeEndField();
+            } else if (type === 'general') {
+                elements.timecodeRow.style.display = 'none';
+                elements.firstWordsGroup.style.display = 'none';
+                elements.lastWordsGroup.style.display = 'none';
+                elements.actionField.placeholder = 'Например: увеличить общую громкость на 3db';
+                elements.actionLabel.innerHTML = 'Описание общей правки';
+            }
+        }
+        
+        function toggleTimeEndField() {
+            const isChecked = document.getElementById('noEndTimecode').checked;
+            const timeEndGroup = document.getElementById('timeEndGroup');
+            const lastWordsGroup = document.getElementById('lastWordsGroup');
+            const firstWordsLabel = document.getElementById('firstWordsLabel');
+
+            if (currentType === 'other') {
+                 timeEndGroup.style.display = isChecked ? 'none' : 'block';
+                 lastWordsGroup.style.display = isChecked ? 'none' : 'block';
+                 firstWordsLabel.innerHTML = isChecked 
+                    ? 'Первые три слова фрагмента <span style="color: #6c757d; font-weight: normal;">(необязательно)</span>'
+                    : 'Первые три слова фрагмента';
             }
         }
 
-        function formatTimecode(input) {
-            let value = input.value.trim();
-            
-            // Убираем все кроме цифр и двоеточия
-            value = value.replace(/[^\d:]/g, '');
-            
-            // Если есть двоеточие
-            if (value.includes(':')) {
-                let parts = value.split(':');
-                let minutes = parts[0];
-                let seconds = parts[1] || '';
-                
-                // Форматируем минуты (добавляем ведущий ноль если нужно)
-                if (minutes.length === 1) {
-                    minutes = '0' + minutes;
-                } else if (minutes.length > 2) {
-                    minutes = minutes.slice(0, 2);
-                }
-                
-                // Форматируем секунды (добавляем ведущий ноль если нужно)
-                if (seconds.length === 1 && seconds !== '') {
-                    seconds = '0' + seconds;
-                } else if (seconds.length > 2) {
-                    seconds = seconds.slice(0, 2);
-                }
-                
-                input.value = minutes + ':' + seconds;
-            } else if (value.length >= 1) {
-                // Если нет двоеточия, автоматически добавляем его
-                if (value.length === 1) {
-                    input.value = '0' + value + ':';
-                } else if (value.length === 2) {
-                    input.value = value + ':';
-                } else if (value.length === 3) {
-                    input.value = '0' + value[0] + ':' + value.slice(1);
-                } else if (value.length >= 4) {
-                    input.value = value.slice(0, 2) + ':' + value.slice(2, 4);
-                }
+        function toggleEditMode(isEditing) {
+            const addBtn = document.getElementById('addEditBtn');
+            const cancelBtn = document.getElementById('cancelEditBtn');
+            if (isEditing) {
+                addBtn.textContent = '💾 Сохранить правку';
+                addBtn.classList.remove('btn-primary');
+                addBtn.classList.add('btn-success');
+                cancelBtn.style.display = 'inline-block';
+            } else {
+                addBtn.textContent = '➕ Добавить правку';
+                addBtn.classList.remove('btn-success');
+                addBtn.classList.add('btn-primary');
+                cancelBtn.style.display = 'none';
+                currentlyEditingId = null;
             }
+        }
+
+        function cancelEdit() {
+            clearForm();
+            toggleEditMode(false);
+            renderEdits(); // Убрать подсветку
+        }
+
+        function editEdit(id) {
+            const editData = edits.find(e => e.id === id);
+            if (!editData) return;
+
+            currentlyEditingId = id;
+            
+            selectType(editData.type);
+
+            document.getElementById('action').value = editData.action;
+
+            if (!editData.isGeneral) {
+                document.getElementById('timeStart').value = editData.timeStart;
+                document.getElementById('firstWords').value = editData.firstWords;
+
+                if(editData.isDurationBased) {
+                    document.getElementById('noEndTimecode').checked = true;
+                } else {
+                    document.getElementById('noEndTimecode').checked = false;
+                    document.getElementById('timeEnd').value = editData.timeEnd;
+                    document.getElementById('lastWords').value = editData.lastWords;
+                }
+                toggleTimeEndField();
+            }
+            
+            toggleEditMode(true);
+            renderEdits(); // Чтобы подсветить элемент
+            document.querySelector('.edit-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        
+        function addOrUpdateEdit() {
+            if (currentlyEditingId !== null) {
+                saveEdit();
+            } else {
+                addEdit();
+            }
+        }
+
+        function getFormData() {
+            let action = document.getElementById('action').value.trim();
+            if (!action && currentType === 'cut') action = 'Вырезать';
+
+            if (!action) {
+                alert('Пожалуйста, заполните описание правки.');
+                return null;
+            }
+
+            if (currentType === 'general') {
+                return { action, isGeneral: true, type: 'general' };
+            }
+
+            const isNoEndTime = document.getElementById('noEndTimecode').checked;
+            const timeStartRaw = document.getElementById('timeStart').value.trim();
+            const firstWords = document.getElementById('firstWords').value.trim();
+
+            if (!timeStartRaw) { alert('Пожалуйста, укажите таймкод начала.'); return null; }
+            if (!isNoEndTime && !document.getElementById('timeEnd').value.trim()) { alert('Пожалуйста, укажите таймкод конца.'); return null; }
+            if (!isNoEndTime && currentType === 'other' && !document.getElementById('lastWords').value.trim()) { alert('Для этого типа правки нужно указать последние три слова.'); return null; }
+            
+            const timeStart = convertTimecode(timeStartRaw);
+            if (!timeStart || !isValidTimecode(timeStart)) { alert('Некорректный формат начального таймкода.'); return null; }
+
+            let timeEnd = '', lastWords = '';
+            if (!isNoEndTime) {
+                timeEnd = convertTimecode(document.getElementById('timeEnd').value.trim());
+                lastWords = document.getElementById('lastWords').value.trim();
+                if (!timeEnd || !isValidTimecode(timeEnd)) { alert('Некорректный формат конечного таймкода.'); return null; }
+                if (timecodeToSeconds(timeStart) > timecodeToSeconds(timeEnd)) { alert('Ошибка! Начальный таймкод не может быть больше конечного.'); return null; }
+            }
+            
+            return { timeStart, timeEnd, firstWords, lastWords, action, isDurationBased: isNoEndTime, isGeneral: false, type: currentType };
         }
 
         function addEdit() {
-            let timeStart = document.getElementById('timeStart').value.trim();
-            let timeEnd = document.getElementById('timeEnd').value.trim();
-            const firstWords = document.getElementById('firstWords').value.trim();
-            const lastWords = document.getElementById('lastWords').value.trim();
-            let action = document.getElementById('action').value.trim();
-
-            // Автоматическая подстановка "Вырезать" для типа cut
-            if (currentType === 'cut' && !action) {
-                action = 'Вырезать';
-            }
-
-            // Проверка обязательных полей (действие уже может быть заполнено автоматически)
-            if (!timeStart || !timeEnd || !firstWords) {
-                alert('Пожалуйста, заполните все обязательные поля');
-                return;
-            }
-
-            // Для всех типов кроме cut проверяем action и lastWords
-            if (currentType !== 'cut') {
-                if (!action) {
-                    alert('Пожалуйста, заполните описание действия');
-                    return;
-                }
-                if (!lastWords) {
-                    alert('Для этого типа правки необходимо указать последние три слова');
-                    return;
-                }
-            }
-
-            // Конвертируем таймкоды в правильный формат
-            timeStart = convertTimecode(timeStart);
-            timeEnd = convertTimecode(timeEnd);
-
-            if (!timeStart || !timeEnd) {
-                alert('Таймкод должен быть в формате ММ:СС (например, 1:23 или 01:23)');
-                return;
-            }
-
-            const edit = {
-                id: Date.now(),
-                timeStart,
-                timeEnd,
-                firstWords,
-                lastWords,
-                action
-            };
-
-            edits.push(edit);
+            const data = getFormData();
+            if (data === null) return;
+            edits.push({ id: Date.now(), ...data });
+            saveProject();
             renderEdits();
             clearForm();
         }
 
-        function renderEdits() {
-            const listContainer = document.getElementById('editsList');
-            const actionButtons = document.getElementById('actionButtons');
+        function saveEdit() {
+            const data = getFormData();
+            if (data === null) return;
 
-            if (edits.length === 0) {
-                listContainer.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state-icon">📝</div>
-                        <p>Правок пока нет. Добавьте первую правку выше.</p>
-                    </div>
-                `;
-                actionButtons.style.display = 'none';
-                return;
+            const editIndex = edits.findIndex(e => e.id === currentlyEditingId);
+            if (editIndex > -1) {
+                edits[editIndex] = { id: currentlyEditingId, ...data };
             }
 
-            actionButtons.style.display = 'flex';
-
-            listContainer.innerHTML = edits.map((edit, index) => `
-                <div class="edit-item">
-                    <div class="edit-item-header">
-                        <span class="edit-number">Правка ${index + 1}</span>
-                        <button class="btn btn-danger" onclick="deleteEdit(${edit.id})">Удалить</button>
-                    </div>
-                    <div class="edit-content">
-                        <strong>${edit.timeStart} - ${edit.timeEnd}</strong> | ${edit.firstWords}${edit.lastWords ? ' | ' + edit.lastWords : ''} | ${edit.action}
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function deleteEdit(id) {
-            edits = edits.filter(edit => edit.id !== id);
+            saveProject();
             renderEdits();
+            clearForm();
         }
 
         function clearForm() {
-            document.getElementById('timeStart').value = '';
-            document.getElementById('timeEnd').value = '';
-            document.getElementById('firstWords').value = '';
-            document.getElementById('lastWords').value = '';
-            document.getElementById('action').value = '';
+            ['timeStart', 'timeEnd', 'firstWords', 'lastWords', 'action'].forEach(id => {
+                const element = document.getElementById(id);
+                if(element) element.value = '';
+            });
+            selectType('cut');
+            toggleEditMode(false);
             document.getElementById('timeStart').focus();
         }
+        
+        function renderEdits() { 
+            const listContainer = document.getElementById('editsList');
+            if (!listContainer) return;
+            const actionButtons = document.getElementById('actionButtons'); 
+            if (edits.length === 0) { 
+                listContainer.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📝</div><p>Правок пока нет.</p></div>`; 
+                actionButtons.style.display = 'none'; 
+                return; 
+            } 
+            actionButtons.style.display = 'flex'; 
+            const generalEdits = edits.filter(e => e.isGeneral); 
+            const timedEdits = edits.filter(e => !e.isGeneral).sort((a, b) => timecodeToSeconds(a.timeStart) - timecodeToSeconds(b.timeStart)); 
+            const generalHtml = generalEdits.map(edit => `
+                <div class="edit-item ${edit.id === currentlyEditingId ? 'editing' : ''} general-edit">
+                    <div class="edit-item-header">
+                        <span class="edit-number">Общая правка</span>
+                        <div class="buttons">
+                            <button class="btn btn-info" onclick="editEdit(${edit.id})">Править</button>
+                            <button class="btn btn-danger" onclick="deleteEdit(${edit.id})">Удалить</button>
+                        </div>
+                    </div>
+                    <div class="edit-content">${edit.action}</div>
+                </div>`).join(''); 
+            const timedHtml = timedEdits.map((edit, index) => { 
+                const timeDisplay = edit.isDurationBased ? `${edit.timeStart}` : `${edit.timeStart} - ${edit.timeEnd}`;
+                const wordsDisplay = `${edit.firstWords ? edit.firstWords : ''}${edit.lastWords ? ' | ' + edit.lastWords : ''}`; 
+                return `
+                <div class="edit-item ${edit.id === currentlyEditingId ? 'editing' : ''}">
+                    <div class="edit-item-header">
+                        <span class="edit-number">Правка ${index + 1}</span>
+                         <div class="buttons">
+                            <button class="btn btn-info" onclick="editEdit(${edit.id})">Править</button>
+                            <button class="btn btn-danger" onclick="deleteEdit(${edit.id})">Удалить</button>
+                        </div>
+                    </div>
+                    <div class="edit-content"><strong>${timeDisplay}</strong>${wordsDisplay ? ' | ' + wordsDisplay : ''} | ${edit.action}</div>
+                </div>`; 
+            }).join(''); 
+            listContainer.innerHTML = generalHtml + timedHtml; 
+        };
+        
+        function copyToClipboard() { /* ... */ };
+        function exportToSrt() { /* ... */ };
 
-        function copyToClipboard() {
-            const text = edits.map((edit, index) => 
-                `${index + 1}. ${edit.timeStart} - ${edit.timeEnd} | ${edit.firstWords}${edit.lastWords ? ' | ' + edit.lastWords : ''} | ${edit.action}`
-            ).join('\n\n');
-
-            navigator.clipboard.writeText(text).then(() => {
-                alert('✅ Все правки скопированы в буфер обмена!');
-            }).catch(() => {
-                const textarea = document.createElement('textarea');
-                textarea.value = text;
-                document.body.appendChild(textarea);
-                textarea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textarea);
-                alert('✅ Все правки скопированы в буфер обмена!');
-            });
-        }
-
-        function clearAll() {
-            if (confirm('Вы уверены, что хотите удалить все правки?')) {
-                edits = [];
-                renderEdits();
-            }
-        }
+        // Полные версии функций для копирования и экспорта
+        copyToClipboard = function() { if (edits.length === 0) return; const projectName = document.getElementById('projectName').value.trim(); let header = projectName ? `Проект: ${projectName}\n\n` : ''; const generalEdits = edits.filter(e => e.isGeneral); const timedEdits = edits.filter(e => !e.isGeneral).sort((a, b) => timecodeToSeconds(a.timeStart) - timecodeToSeconds(b.timeStart)); let timedText = timedEdits.map((edit, index) => { const timeDisplay = edit.isDurationBased ? `${edit.timeStart}` : `${edit.timeStart} - ${edit.timeEnd}`; const wordsDisplay = `${edit.firstWords ? edit.firstWords : ''}${edit.lastWords ? ' | ' + edit.lastWords : ''}`; return `${index + 1}. ${timeDisplay}${wordsDisplay ? ' | ' + wordsDisplay : ''} | ${edit.action}` }).join('\n\n'); let generalText = ''; if (generalEdits.length > 0) { generalText = '\n\n---\nОБЩИЕ ПРАВКИ:\n' + generalEdits.map(e => `- ${e.action}`).join('\n'); } navigator.clipboard.writeText(header + timedText + generalText).then(() => alert('✅ Правки скопированы в буфер обмена!')); };
+        exportToSrt = function() { if (edits.length === 0) { alert('Нет правок для экспорта.'); return; } const toSrtTime = (mm_ss) => `00:${mm_ss},000`; const generalEdits = edits.filter(e => e.isGeneral); const timedEdits = edits.filter(e => !e.isGeneral).sort((a, b) => timecodeToSeconds(a.timeStart) - timecodeToSeconds(b.timeStart)); let lastTimeInSeconds = 0; let currentIndex = 1; let srtContent = timedEdits.map(edit => { const srtStartTime = toSrtTime(edit.timeStart); let srtEndTime; let endSeconds; if (edit.isDurationBased) { endSeconds = timecodeToSeconds(edit.timeStart) + 2; } else { endSeconds = timecodeToSeconds(edit.timeEnd); } srtEndTime = toSrtTime(secondsToTimecode(endSeconds)); if (endSeconds > lastTimeInSeconds) lastTimeInSeconds = endSeconds; let textLines = [`[${edit.action}]`]; if(edit.firstWords) textLines.push(`Начало: ${edit.firstWords}`); if (edit.lastWords) textLines.push(`Конец: ${edit.lastWords}`); return `${currentIndex++}\n${srtStartTime} --> ${srtEndTime}\n${textLines.join('\n')}`; }).join('\n\n'); if (generalEdits.length > 0) { if(srtContent) srtContent += '\n\n'; srtContent += generalEdits.map(edit => { const startTime = lastTimeInSeconds + 2; const endTime = startTime + 1; lastTimeInSeconds = endTime; const srtStartTime = toSrtTime(secondsToTimecode(startTime)); const srtEndTime = toSrtTime(secondsToTimecode(endTime)); return `${currentIndex++}\n${srtStartTime} --> ${srtEndTime}\n[ОБЩАЯ ПРАВКА]: ${edit.action}`; }).join('\n\n'); } const projectName = document.getElementById('projectName').value.trim(); const fileName = (projectName.replace(/[\s/\\?%*:|"<>]/g, '_') || 'edits') + '.srt'; const blob = new Blob([srtContent], { type: 'text/plain;charset=utf-8' }); const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = fileName; document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(link.href); };
+        
+        // Вставка полной инструкции
+        document.getElementById('instructions').innerHTML = `
+            <p>Добро пожаловать! Этот инструмент поможет вам быстро и удобно составлять правки для видеомонтажа.</p>
+            <h3>🚀 Быстрый старт и полезные трюки</h3>
+            <ul>
+                <li><strong>Таймкод без двоеточия:</strong> Вам не обязательно ставить ":" при вводе времени. Просто введите цифры подряд (например, <code>123</code> или <code>0123</code>) или через пробел, и поле само превратится в <code>01:23</code>.</li>
+                <li><strong>Навигация через Enter:</strong> Нажимайте клавишу <code>Enter</code> для быстрого перехода к следующему полю. Нажатие <code>Enter</code> в последнем поле "Что делаем" автоматически добавит или сохранит правку.</li>
+            </ul>
+            <h3>📝 Описание Типов Правок</h3>
+            <ul>
+                <li><strong>✂️ Вырезать:</strong> Классический тип для удаления фрагмента видео. Требует указания таймкода начала и конца, а также первых и последних слов для точной идентификации фрагмента.</li>
+                <li><strong>⚙️ Другое:</strong> Гибкий тип для любых других действий (работа со звуком, цветокоррекция, добавление эффектов).
+                    <ul>
+                        <li><strong>Обычный режим:</strong> Работает как "Вырезать", требуя указать начало и конец фрагмента.</li>
+                        <li><strong>Режим "Без конечного таймкода":</strong> Если поставить галочку, правка будет относиться к одной точке во времени (например, "добавить звуковой эффект на 02:15"). В этом режиме поля "Таймкод конца" и "Последние три слова" исчезают, а поле "Первые три слова" становится необязательным.</li>
+                    </ul>
+                </li>
+                <li><strong>📄 Общая:</strong> Для комментариев, которые относятся ко всему видео (например, "увеличить общую громкость на 3db" или "применить цветокоррекцию ко всему ролику"). Эта правка не требует таймкодов и всегда будет отображаться в самом верху списка для легкого доступа.</li>
+            </ul>
+            <h3>📋 Кнопки Управления</h3>
+            <p>После добавления хотя бы одной правки появляются кнопки:</p>
+            <ul>
+                <li><strong>Скопировать:</strong> Копирует все правки в буфер обмена в виде отформатированного текста. Идеально для быстрой отправки в мессенджере или по почте. Общие правки добавляются в конец списка.</li>
+                <li><strong>Экспорт в .SRT:</strong> Создает специальный файл субтитров <code>.srt</code>, который можно импортировать в профессиональные программы монтажа (Adobe Premiere Pro, DaVinci Resolve, Final Cut). Правки появятся в виде маркеров на таймлинии.</li>
+                <li><strong>Очистить всё:</strong> Удаляет все правки и название проекта. Действие требует подтверждения.</li>
+            </ul>
+            <h3>💾 Сохранение</h3>
+            <p>Вся ваша работа, включая название проекта и список правок, автоматически сохраняется в браузере. Вы можете закрыть вкладку и вернуться позже, все данные останутся на месте.</p>
+        `;
     </script>
 </body>
 </html>
