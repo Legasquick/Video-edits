@@ -12,7 +12,7 @@
         .header h1 { font-size: 28px; margin-bottom: 10px; }
         .header p { opacity: 0.9; font-size: 14px; }
         .content { padding: 30px; }
-        .project-name-container { background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 2px solid #e9ecef; }
+        .project-name-container, .video-player-container { background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 2px solid #e9ecef; }
         .edit-form { background: #f8f9fa; padding: 25px; border-radius: 12px; margin-bottom: 25px; border: 2px solid #e9ecef; }
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
         .form-group { margin-bottom: 15px; }
@@ -37,6 +37,9 @@
         .btn-danger:hover { background: #c82333; }
         .btn-info { background: #17a2b8; color: white; padding: 8px 16px; font-size: 12px; }
         .btn-info:hover { background: #138496; }
+        .input-with-button { display: flex; align-items: center; gap: 8px; }
+        .btn-copy-time { padding: 10px 12px; border: none; background: #e9ecef; color: #495057; border-radius: 8px; cursor: pointer; font-size: 14px; transition: background 0.2s; }
+        .btn-copy-time:hover { background: #dee2e6; }
         .edits-list { margin-top: 30px; }
         .edit-item { background: white; padding: 20px; border-radius: 12px; margin-bottom: 15px; border: 2px solid #e9ecef; transition: all 0.3s; position: relative; }
         .edit-item:hover { border-color: #667eea; box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1); }
@@ -88,6 +91,14 @@
                 </div>
             </div>
 
+            <div class="video-player-container">
+                <div class="form-group">
+                    <label for="videoUpload">Загрузить видео для разметки</label>
+                    <input type="file" id="videoUpload" accept="video/*" style="padding: 10px; width: 100%;">
+                </div>
+                <video id="videoPlayer" controls width="100%" style="border-radius: 12px; margin-top: 10px; display: none; background: #000;"></video>
+            </div>
+
             <div class="edit-form">
                 <div class="type-selector">
                     <div class="type-option active" onclick="selectType('cut')" data-type="cut">
@@ -112,11 +123,17 @@
                 <div class="form-row" id="timecodeRow">
                     <div class="form-group">
                         <label for="timeStart">Таймкод начала ((Ч:)ММ:СС)</label>
-                        <input type="text" id="timeStart" placeholder="1:23:45 или 23:45" onblur="formatTimecode(this)" onfocus="this.classList.remove('input-error')">
+                         <div class="input-with-button">
+                            <input type="text" id="timeStart" placeholder="1:23:45 или 23:45" onblur="formatTimecode(this)" onfocus="this.classList.remove('input-error')">
+                            <button class="btn-copy-time" onclick="copyTimestamp('timeStart')" title="Копировать текущее время видео">📋</button>
+                        </div>
                     </div>
                     <div class="form-group" id="timeEndGroup">
                         <label for="timeEnd">Таймкод конца ((Ч:)ММ:СС)</label>
-                        <input type="text" id="timeEnd" placeholder="1:23:55 или 23:55" onblur="formatTimecode(this)" onfocus="this.classList.remove('input-error')">
+                        <div class="input-with-button">
+                            <input type="text" id="timeEnd" placeholder="1:23:55 или 23:55" onblur="formatTimecode(this)" onfocus="this.classList.remove('input-error')">
+                            <button class="btn-copy-time" onclick="copyTimestamp('timeEnd')" title="Копировать текущее время видео">📋</button>
+                        </div>
                     </div>
                 </div>
                 
@@ -159,10 +176,16 @@
             loadProject();
             selectType(currentType); 
             setupEnterNavigation();
+            setupVideoPlayer();
             document.getElementById('projectName').addEventListener('input', saveProject);
             
             document.getElementById('instructions').innerHTML = `
                 <p>Добро пожаловать! Этот инструмент поможет вам быстро и удобно составлять правки для видеомонтажа.</p>
+                <h3>✨ Новые возможности</h3>
+                <ul>
+                    <li><strong>Загрузка видео:</strong> Загрузите свой видеофайл, чтобы видеть контекст и легко копировать таймкоды.</li>
+                    <li><strong>Копирование таймкодов:</strong> Нажмите на иконку 📋 рядом с полем времени, чтобы вставить текущий таймкод из плеера.</li>
+                </ul>
                 <h3>🚀 Быстрый старт и полезные трюки</h3>
                 <ul>
                     <li><strong>Умный ввод таймкода:</strong> Вам не обязательно ставить двоеточия. Просто введите цифры, и система сама их расставит:
@@ -184,18 +207,36 @@
                     </li>
                     <li><strong>📄 Общая:</strong> Комментарии ко всему видео. Не требуют таймкодов и всегда отображаются вверху списка.</li>
                 </ul>
-                <h3>📋 Кнопки Управления</h3>
-                <ul>
-                    <li><strong>Править:</strong> Заполняет форму данными из существующей правки для их изменения.</li>
-                    <li><strong>Скопировать:</strong> Копирует все правки в буфер обмена в виде отформатированного текста.</li>
-                    <li><strong>Экспорт в .SRT:</strong> Создает файл субтитров <code>.srt</code>, который можно импортировать в программы монтажа.</li>
-                    <li><strong>Очистить всё:</strong> Удаляет все правки и название проекта.</li>
-                </ul>
                 <h3>💾 Сохранение</h3>
                 <p>Вся ваша работа автоматически сохраняется в браузере. Вы можете закрыть вкладку и вернуться позже.</p>
             `;
         });
         
+        function setupVideoPlayer() {
+            document.getElementById('videoUpload').addEventListener('change', function(event) {
+                const videoPlayer = document.getElementById('videoPlayer');
+                const file = event.target.files[0];
+                if (file) {
+                    const fileURL = URL.createObjectURL(file);
+                    videoPlayer.src = fileURL;
+                    videoPlayer.style.display = 'block';
+                }
+            });
+        }
+
+        function copyTimestamp(targetId) {
+            const videoPlayer = document.getElementById('videoPlayer');
+            if (!videoPlayer || !videoPlayer.src) {
+                alert('Сначала загрузите видео.');
+                return;
+            }
+            const currentTime = Math.floor(videoPlayer.currentTime);
+            const formattedTime = secondsToTimecode(currentTime);
+            const targetInput = document.getElementById(targetId);
+            targetInput.value = formattedTime;
+            targetInput.focus();
+        }
+
         function saveProject() { const projectData = { projectName: document.getElementById('projectName').value, edits: edits }; localStorage.setItem(PROJECT_STORAGE_KEY, JSON.stringify(projectData)); };
         function loadProject() { const savedData = localStorage.getItem(PROJECT_STORAGE_KEY); if (savedData) { const projectData = JSON.parse(savedData); edits = projectData.edits || []; document.getElementById('projectName').value = projectData.projectName || ''; renderEdits(); } };
         const fieldOrder = ['timeStart', 'timeEnd', 'firstWords', 'lastWords', 'action'];
@@ -204,8 +245,6 @@
         function toggleInstructions() { const instructions = document.getElementById('instructions'); const icon = document.getElementById('toggle-icon'); instructions.classList.toggle('show'); icon.textContent = instructions.classList.contains('show') ? '▲' : '▼'; };
         function deleteEdit(id) { if(currentlyEditingId === id) cancelEdit(); edits = edits.filter(edit => edit.id !== id); saveProject(); renderEdits(); };
         function clearAll() { if (confirm('Вы уверены, что хотите удалить все правки и название проекта?')) { edits = []; document.getElementById('projectName').value = ''; saveProject(); renderEdits(); cancelEdit(); } };
-
-        // --- ЛОГИКА ВРЕМЕНИ (ПОЛНОСТЬЮ ОБНОВЛЕНА) ---
 
         function parseAndFormatTimecode(value) {
             if (!value) return '';
@@ -264,7 +303,7 @@
         function validateAllTimecodes() {
             const startInput = document.getElementById('timeStart');
             const endInput = document.getElementById('timeEnd');
-            formatTimecode(startInput); // Форматируем перед проверкой
+            formatTimecode(startInput); 
             formatTimecode(endInput);
 
             const isNoEndTime = document.getElementById('noEndTimecode').checked;
@@ -288,8 +327,6 @@
             return !hasError;
         }
         
-        // --- ГЛАВНЫЕ ФУНКЦИИ ПРИЛОЖЕНИЯ ---
-
         function selectType(type) {
             currentType = type;
             document.querySelectorAll('.type-option').forEach(option => option.classList.remove('active'));
@@ -304,6 +341,7 @@
                 lastWordsGroup: document.getElementById('lastWordsGroup')
             };
 
+            // Reset to default visibility first
             elements.timecodeRow.style.display = 'grid';
             elements.firstWordsGroup.style.display = 'block';
             elements.lastWordsGroup.style.display = 'block';
@@ -324,7 +362,11 @@
                 elements.actionField.placeholder = 'Например: увеличить общую громкость';
                 elements.actionLabel.innerHTML = 'Описание общей правки';
             }
-            toggleTimeEndField();
+            
+            // Only call the toggle for fields that are not general
+            if (type !== 'general') {
+                toggleTimeEndField();
+            }
         }
         
         function toggleTimeEndField() {
@@ -404,7 +446,6 @@
 
             if (!timeStart) { alert('Пожалуйста, укажите таймкод начала.'); return null; }
             if (!isNoEndTime && !timeEnd) { alert('Пожалуйста, укажите таймкод конца.'); return null; }
-            if (!isNoEndTime && currentType === 'other' && !lastWords) { alert('Для этого типа правки нужно указать последние три слова.'); return null; }
             
             return { timeStart, timeEnd, firstWords, lastWords, action, isDurationBased: isNoEndTime, isGeneral: false, type: currentType };
         }
