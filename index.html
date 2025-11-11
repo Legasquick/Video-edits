@@ -102,12 +102,8 @@
             <div class="edit-form">
                 <div class="type-selector">
                     <div class="type-option active" onclick="selectType('cut')" data-type="cut">
-                        <div class="type-option-title">✂️ Вырезать</div>
-                        <div class="type-option-desc">Удалить фрагмент</div>
-                    </div>
-                    <div class="type-option" onclick="selectType('other')" data-type="other">
-                        <div class="type-option-title">⚙️ Другое</div>
-                        <div class="type-option-desc">Звук, цвет и т.д.</div>
+                        <div class="type-option-title">✂️ Вырезать / Другое</div>
+                        <div class="type-option-desc">Удалить или изменить фрагмент</div>
                     </div>
                     <div class="type-option" onclick="selectType('general')" data-type="general">
                         <div class="type-option-title">📄 Общая</div>
@@ -115,7 +111,7 @@
                     </div>
                 </div>
 
-                <div class="toggle-container" id="no-end-timecode-toggle" style="display: none;">
+                <div class="toggle-container" id="no-end-timecode-toggle">
                     <input type="checkbox" id="noEndTimecode" onchange="toggleTimeEndField()">
                     <label for="noEndTimecode">Без конечного таймкода (правка в одной точке)</label>
                 </div>
@@ -198,8 +194,7 @@
                 </ul>
                 <h3>📝 Описание Типов Правок</h3>
                 <ul>
-                    <li><strong>✂️ Вырезать:</strong> Для удаления фрагмента. Требует начала и конца.</li>
-                    <li><strong>⚙️ Другое:</strong> Для любых других действий (звук, цвет, эффекты).
+                    <li><strong>✂️ Вырезать / Другое:</strong> Для удаления или изменения фрагмента (звук, цвет, эффекты).
                         <ul>
                             <li><strong>Обычный режим:</strong> Требует указать начало и конец фрагмента.</li>
                             <li><strong>Режим "Без конечного таймкода":</strong> Правка для одной точки во времени. Поля конца исчезают, а "Первые слова" становятся необязательными.</li>
@@ -341,7 +336,7 @@
                 lastWordsGroup: document.getElementById('lastWordsGroup')
             };
 
-            // Reset to default visibility first
+            // Reset to default visibility
             elements.timecodeRow.style.display = 'grid';
             elements.firstWordsGroup.style.display = 'block';
             elements.lastWordsGroup.style.display = 'block';
@@ -349,12 +344,9 @@
             document.getElementById('noEndTimecode').checked = false;
             
             if (type === 'cut') {
-                elements.actionField.placeholder = 'Вырезать';
-                elements.actionLabel.innerHTML = 'Что делаем (описание правки) <span style="color: #6c757d; font-weight: normal;">(по умолчанию "Вырезать")</span>';
-            } else if (type === 'other') {
                 elements.noEndTimeToggle.style.display = 'flex';
-                elements.actionField.placeholder = 'Сделать звук громче';
-                elements.actionLabel.innerHTML = 'Что делаем (описание правки)';
+                elements.actionField.placeholder = 'Вырезать, сделать звук громче и т.д.';
+                elements.actionLabel.innerHTML = 'Что делаем (описание правки) <span style="color: #6c757d; font-weight: normal;">(для диапазона по умолчанию "Вырезать")</span>';
             } else if (type === 'general') {
                 elements.timecodeRow.style.display = 'none';
                 elements.firstWordsGroup.style.display = 'none';
@@ -363,7 +355,6 @@
                 elements.actionLabel.innerHTML = 'Описание общей правки';
             }
             
-            // Only call the toggle for fields that are not general
             if (type !== 'general') {
                 toggleTimeEndField();
             }
@@ -398,7 +389,7 @@
             if (!editData) return;
 
             currentlyEditingId = id;
-            const type = editData.isGeneral ? 'general' : (editData.type || 'cut');
+            const type = editData.isGeneral ? 'general' : 'cut'; // Treat all timed edits as 'cut'
             selectType(type);
 
             document.getElementById('action').value = editData.action;
@@ -429,16 +420,23 @@
 
         function getFormData() {
             let action = document.getElementById('action').value.trim();
-            if (!action && currentType === 'cut') action = 'Вырезать';
-            else if (!action) { alert('Пожалуйста, заполните описание правки.'); return null; }
 
             if (currentType === 'general') {
+                if (!action) { alert('Пожалуйста, заполните описание правки.'); return null; }
                 return { action, isGeneral: true, type: 'general' };
+            }
+            
+            const isNoEndTime = document.getElementById('noEndTimecode').checked;
+            
+            if (!action && !isNoEndTime) {
+                action = 'Вырезать';
+            } else if (!action) {
+                alert('Пожалуйста, заполните описание правки.');
+                return null;
             }
 
             if (!validateAllTimecodes()) return null;
 
-            const isNoEndTime = document.getElementById('noEndTimecode').checked;
             const timeStart = document.getElementById('timeStart').value.trim();
             const firstWords = document.getElementById('firstWords').value.trim();
             const timeEnd = isNoEndTime ? '' : document.getElementById('timeEnd').value.trim();
@@ -447,7 +445,7 @@
             if (!timeStart) { alert('Пожалуйста, укажите таймкод начала.'); return null; }
             if (!isNoEndTime && !timeEnd) { alert('Пожалуйста, укажите таймкод конца.'); return null; }
             
-            return { timeStart, timeEnd, firstWords, lastWords, action, isDurationBased: isNoEndTime, isGeneral: false, type: currentType };
+            return { timeStart, timeEnd, firstWords, lastWords, action, isDurationBased: isNoEndTime, isGeneral: false, type: 'cut' };
         }
 
         function addEdit() {
