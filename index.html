@@ -3,33 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Video Feedback Pro 2.2</title>
+    <title>Video Feedback Pro 2.4 (Fixed)</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
 
         :root {
-            /* Palette */
             --bg-main: #0f172a;       
             --bg-secondary: #1e293b;  
             --bg-input: #334155;      
             --bg-hover: #475569;
-            
             --primary: #6366f1;       
             --primary-hover: #4f46e5;
-            
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
-            
             --border: #334155;
             --border-focus: #818cf8;
-            
             --danger: #ef4444;
-            --success: #10b981;
             --warning: #f59e0b;
-            
             --radius: 12px;
             --radius-sm: 6px;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
@@ -43,70 +35,58 @@
             font-size: 14px;
         }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--bg-input); border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
-
-        /* --- Layout --- */
+        /* Layout */
         .app-container {
             display: grid;
-            grid-template-columns: 1fr 400px;
+            grid-template-columns: 1fr 380px; 
             grid-template-rows: 60px 1fr;
             height: 100vh;
-            background-color: var(--bg-main);
         }
 
-        /* --- Header --- */
+        /* Header */
         .header {
             grid-column: 1 / -1;
             background-color: var(--bg-secondary);
             border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 24px;
-            z-index: 10;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 24px; z-index: 10;
         }
 
-        .brand {
-            display: flex; align-items: center; gap: 12px;
-            font-weight: 600; font-size: 18px; color: var(--text-main);
-        }
-        .brand span { background: linear-gradient(135deg, #6366f1, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-
+        .brand { font-weight: 600; font-size: 18px; display: flex; align-items: center; gap: 10px; }
         .project-input {
             background: var(--bg-main); border: 1px solid var(--border);
             color: var(--text-main); padding: 8px 16px; border-radius: var(--radius-sm); 
-            width: 320px; transition: all 0.2s; font-family: inherit;
+            width: 300px; transition: 0.2s;
         }
-        .project-input:focus { border-color: var(--border-focus); box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2); }
+        .project-input:focus { border-color: var(--border-focus); }
 
-        /* --- Left Panel (Video & Editor) --- */
+        /* Left Panel */
         .left-panel {
-            padding: 24px;
+            padding: 20px;
             overflow-y: auto;
             display: flex; flex-direction: column; gap: 16px;
+            background: var(--bg-main);
         }
 
-        /* Video Area */
+        /* Video Wrapper */
         .video-wrapper {
             background: #000;
             border-radius: var(--radius);
-            box-shadow: var(--shadow);
             border: 1px solid var(--border);
             display: flex; flex-direction: column;
             overflow: hidden;
-            transition: height 0.2s ease;
+            transition: height 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            width: 100%;
+            position: relative;
         }
 
         .video-container {
-            position: relative;
-            flex: 1;
+            flex: 1; 
             display: flex; align-items: center; justify-content: center;
             background: #000;
-            min-height: 200px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
         }
         
         video { 
@@ -114,210 +94,157 @@
             height: 100%; 
             display: block; 
             cursor: pointer; 
+            object-fit: contain; 
         }
 
-        /* Timeline Bar */
-        .video-timeline-bar {
+        /* Video Footer & Controls */
+        .video-footer {
             background: var(--bg-secondary);
-            padding: 8px 16px;
-            display: flex; align-items: center; gap: 12px;
+            padding: 12px 16px;
             border-top: 1px solid var(--border);
+            display: flex; flex-direction: column; gap: 10px;
         }
 
-        .time-display {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px; color: var(--text-muted);
-            white-space: nowrap;
-            min-width: 90px;
-            text-align: right;
+        /* Timeline Styles */
+        .timeline-container {
+            display: flex; align-items: center; gap: 12px;
+            width: 100%;
         }
 
-        /* Range Slider Styling (Seek Bar) */
         input[type=range] {
             -webkit-appearance: none;
             width: 100%;
             background: transparent;
             cursor: pointer;
             height: 16px;
+            display: block;
         }
-        input[type=range]:focus { outline: none; border: none; box-shadow: none; }
+        input[type=range]:focus { outline: none; }
         
+        /* Track */
         input[type=range]::-webkit-slider-runnable-track {
-            width: 100%; height: 4px; cursor: pointer;
-            background: var(--bg-input); border-radius: 2px;
+            width: 100%; height: 6px; cursor: pointer;
+            background: var(--bg-input); border-radius: 3px;
         }
+        /* Thumb */
         input[type=range]::-webkit-slider-thumb {
-            height: 14px; width: 14px; border-radius: 50%;
-            background: var(--primary); cursor: pointer;
-            -webkit-appearance: none; margin-top: -5px;
+            height: 16px; width: 16px; border-radius: 50%;
+            background: var(--primary); 
+            cursor: pointer;
+            -webkit-appearance: none;
+            margin-top: -5px; 
             transition: transform 0.1s;
+            border: 2px solid white;
         }
-        input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); background: var(--primary-hover); }
+        input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
 
-        /* Controls & Size Slider */
-        .controls-bar {
-            display: flex; gap: 12px; align-items: center;
-            background: var(--bg-secondary); padding: 10px 16px;
-            border-radius: var(--radius); border: 1px solid var(--border);
-            flex-wrap: wrap;
+        .time-display { 
+            font-family: 'JetBrains Mono', monospace; font-size: 12px; 
+            color: var(--text-main); min-width: 95px; text-align: right; 
         }
+
+        /* Bottom Controls Row */
+        .controls-row {
+            display: flex; align-items: center; justify-content: space-between;
+            flex-wrap: wrap; gap: 10px;
+        }
+        .controls-left { display: flex; gap: 8px; align-items: center; }
         
-        .size-control {
-            display: flex; align-items: center; gap: 8px; margin-left: auto;
-            font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;
+        /* Shortcuts Help */
+        .shortcuts-info {
+            font-size: 11px; color: var(--text-muted); 
+            display: flex; gap: 12px; align-items: center;
+            background: rgba(255,255,255,0.05); padding: 6px 12px; border-radius: 4px;
+            border: 1px solid rgba(255,255,255,0.05);
         }
+        .key {
+            background: var(--bg-input); padding: 2px 6px; border-radius: 4px; 
+            font-family: 'JetBrains Mono', monospace; color: var(--text-main); border: 1px solid var(--border);
+            font-weight: bold;
+        }
+
+        .size-control { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; margin-left: 15px; }
         .size-slider { width: 80px !important; }
 
+        /* Upload Zone */
         .upload-zone {
             position: absolute; top: 0; left: 0; right: 0; bottom: 0;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             gap: 15px; color: var(--text-muted); z-index: 5;
+            background: #0f172a;
         }
-        .upload-btn {
-            background: var(--primary); color: white; padding: 10px 24px; 
-            border-radius: var(--radius-sm); cursor: pointer; border: none; 
-            font-weight: 500; transition: 0.2s;
-        }
-        .upload-btn:hover { background: var(--primary-hover); transform: translateY(-1px); }
+        .upload-btn { background: var(--primary); color: white; padding: 12px 24px; border-radius: var(--radius-sm); border: none; cursor: pointer; font-size: 15px; }
 
-        /* Form Area */
+        /* Editor Form */
         .editor-card {
             background-color: var(--bg-secondary);
-            padding: 24px; border-radius: var(--radius);
+            padding: 20px; border-radius: var(--radius);
             border: 1px solid var(--border);
-            box-shadow: var(--shadow);
         }
 
-        /* Segmented Control Tabs */
-        .type-tabs { 
-            display: flex; background: var(--bg-main); padding: 4px; 
-            border-radius: var(--radius-sm); margin-bottom: 20px; 
-            width: fit-content; border: 1px solid var(--border);
-        }
-        .type-tab {
-            padding: 6px 20px; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 500;
-            color: var(--text-muted); transition: 0.2s; user-select: none;
-        }
-        .type-tab:hover { color: var(--text-main); }
-        .type-tab.active { background: var(--bg-input); color: var(--text-main); shadow: 0 1px 2px rgba(0,0,0,0.2); }
-        .type-tab.active-general { background: var(--bg-input); color: var(--text-main); }
+        .type-tabs { display: flex; background: var(--bg-main); padding: 4px; border-radius: var(--radius-sm); margin-bottom: 16px; width: fit-content; border: 1px solid var(--border); }
+        .type-tab { padding: 6px 16px; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 500; color: var(--text-muted); user-select: none; }
+        .type-tab.active { background: var(--bg-input); color: var(--text-main); }
 
-        /* Inputs */
-        .form-grid { display: grid; gap: 16px; }
-        .row { display: flex; gap: 16px; }
+        .form-grid { display: grid; gap: 12px; }
+        .row { display: flex; gap: 12px; }
         .col { flex: 1; display: flex; flex-direction: column; gap: 6px; }
 
-        label { font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-        
-        .input-wrapper { position: relative; }
+        label { font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
         
         input[type="text"], textarea {
             width: 100%; background: var(--bg-input); border: 1px solid transparent;
-            color: white; padding: 10px 12px; border-radius: var(--radius-sm); 
-            font-size: 14px; font-family: inherit; transition: 0.2s;
+            color: white; padding: 10px; border-radius: var(--radius-sm); font-size: 14px; 
         }
-        input[type="text"]:focus, textarea:focus { 
-            border-color: var(--primary); background: var(--bg-main);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
-        }
-        textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
-
-        .time-input-group input { padding-right: 40px; font-family: 'JetBrains Mono', monospace; }
-        .time-capture-btn {
-            position: absolute; right: 4px; top: 4px; bottom: 4px;
-            width: 32px; border: none; border-radius: 4px;
-            background: var(--bg-secondary); color: var(--text-main);
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            font-size: 14px; transition: 0.2s;
-        }
-        .time-capture-btn:hover { background: var(--primary); color: white; }
-
-        /* Action Buttons */
-        .btn {
-            padding: 10px 20px; border: none; border-radius: var(--radius-sm); 
-            cursor: pointer; font-weight: 600; font-size: 14px; 
-            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-            transition: all 0.2s ease;
-        }
-        .btn-primary { background: linear-gradient(135deg, var(--primary), #4f46e5); color: white; box-shadow: 0 2px 4px rgba(99, 102, 241, 0.3); }
-        .btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
+        input[type="text"]:focus, textarea:focus { border-color: var(--primary); background: var(--bg-main); }
         
+        .time-input-group { position: relative; }
+        .time-capture-btn {
+            position: absolute; right: 4px; top: 4px; bottom: 4px; width: 30px;
+            border: none; border-radius: 4px; background: var(--bg-secondary); color: var(--text-main); cursor: pointer;
+        }
+        .time-capture-btn:hover { background: var(--primary); }
+
+        .btn { padding: 10px 20px; border: none; border-radius: var(--radius-sm); cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; }
+        .btn-primary { background: linear-gradient(135deg, var(--primary), #4f46e5); color: white; }
         .btn-secondary { background: var(--bg-input); color: var(--text-muted); border: 1px solid var(--border); }
-        .btn-secondary:hover { background: var(--bg-hover); color: white; border-color: var(--text-muted); }
-        .btn-sm { padding: 6px 12px; font-size: 12px; height: 32px; }
+        .btn-sm { padding: 4px 10px; font-size: 11px; height: 28px; }
 
-        /* --- Right Panel (List) --- */
+        /* Right Panel */
         .right-panel {
-            background-color: var(--bg-secondary);
-            border-left: 1px solid var(--border);
-            display: flex; flex-direction: column;
-            overflow: hidden;
+            background-color: var(--bg-secondary); border-left: 1px solid var(--border);
+            display: flex; flex-direction: column; overflow: hidden;
         }
-
-        .panel-header {
-            padding: 16px 20px;
-            border-bottom: 1px solid var(--border);
-            display: flex; justify-content: space-between; align-items: center;
-            background: rgba(30, 41, 59, 0.95);
-            backdrop-filter: blur(10px);
-        }
-        .panel-title { font-size: 14px; font-weight: 600; color: var(--text-main); }
-        .badge-count { background: var(--bg-input); padding: 2px 8px; border-radius: 10px; font-size: 11px; margin-left: 8px; }
-
-        .edits-list { 
-            flex: 1; padding: 16px; overflow-y: auto; 
-            display: flex; flex-direction: column; gap: 12px;
-        }
-
+        .panel-header { padding: 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: rgba(30, 41, 59, 0.95); }
+        .edits-list { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        
         .edit-card {
             background: var(--bg-main); border: 1px solid var(--border); 
-            border-radius: var(--radius-sm); padding: 14px;
-            position: relative; transition: 0.2s; cursor: pointer;
-            border-left: 3px solid transparent;
+            border-radius: var(--radius-sm); padding: 12px; position: relative; cursor: pointer;
+            border-left: 3px solid transparent; transition: 0.2s;
         }
         .edit-card:hover { transform: translateX(4px); border-color: var(--border-focus); }
         .edit-card.type-cut { border-left-color: var(--primary); }
         .edit-card.type-general { border-left-color: var(--warning); }
-        .edit-card.editing { border-color: var(--warning); box-shadow: 0 0 0 1px var(--warning) inset; }
-
-        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
-        .timestamp-badge { 
-            background: rgba(99, 102, 241, 0.15); color: #a5b4fc; 
-            padding: 4px 8px; border-radius: 4px; 
-            font-size: 11px; font-family: 'JetBrains Mono', monospace; font-weight: 500;
-            display: inline-flex; align-items: center; gap: 4px;
-        }
-        .general-badge {
-            background: rgba(245, 158, 11, 0.15); color: #fcd34d;
-            padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
-        }
-        .card-context { 
-            font-size: 12px; color: var(--text-muted); margin-bottom: 8px; 
-            padding: 8px; background: var(--bg-secondary); border-radius: 4px; 
-            border-left: 2px solid var(--bg-input); font-style: italic;
-        }
-        .card-text { font-size: 14px; line-height: 1.5; color: var(--text-main); white-space: pre-wrap; }
+        .edit-card.editing { border-color: var(--warning); }
         
-        .card-actions { 
-            display: flex; gap: 4px; opacity: 0; transition: 0.2s; 
-            position: absolute; top: 10px; right: 10px;
-            background: var(--bg-main); padding-left: 10px;
-        }
+        .card-header { display: flex; justify-content: space-between; margin-bottom: 6px; }
+        .timestamp-badge { background: rgba(99, 102, 241, 0.15); color: #a5b4fc; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-family: monospace; }
+        .card-context { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; font-style: italic; background: var(--bg-secondary); padding: 4px 8px; border-radius: 4px; }
+        .card-actions { display: flex; gap: 4px; opacity: 0; transition: 0.2s; position: absolute; top: 8px; right: 8px; background: var(--bg-main); }
         .edit-card:hover .card-actions { opacity: 1; }
-        
-        .icon-btn {
-            width: 24px; height: 24px; border-radius: 4px; border: 1px solid var(--border);
-            background: var(--bg-secondary); color: var(--text-muted);
-            display: flex; align-items: center; justify-content: center; cursor: pointer;
-        }
-        .icon-btn:hover { color: var(--text-main); border-color: var(--text-muted); }
+        .icon-btn { width: 22px; height: 22px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg-secondary); color: var(--text-muted); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .icon-btn:hover { color: var(--text-main); }
         .icon-btn.danger:hover { background: var(--danger); color: white; border-color: var(--danger); }
-
-        .export-bar { padding: 16px; background: var(--bg-secondary); border-top: 1px solid var(--border); display: flex; gap: 10px; }
+        
+        .export-bar { padding: 12px; background: var(--bg-secondary); border-top: 1px solid var(--border); display: flex; gap: 8px; }
         .export-bar button { flex: 1; }
         .hidden { display: none !important; }
-        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 0.8; } 100% { opacity: 0.5; } }
-        .empty-state { text-align: center; color: var(--text-muted); margin-top: 60px; animation: pulse 3s infinite; }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--bg-input); border-radius: 3px; }
 
         @media (max-width: 900px) {
             .app-container { grid-template-columns: 1fr; grid-template-rows: auto auto 1fr; }
@@ -330,72 +257,93 @@
 <div class="app-container">
     <header class="header">
         <div class="brand"><span>📹</span> Video Logic Pro</div>
-        <input type="text" id="projectName" class="project-input" placeholder="Название проекта / Видео">
+        <input type="text" id="projectName" class="project-input" placeholder="Название проекта">
     </header>
 
     <div class="left-panel">
-        <!-- Wrapper controls the size -->
-        <div class="video-wrapper" id="videoWrapper" style="height: 480px;">
+        
+        <!-- Video Wrapper -->
+        <div class="video-wrapper" id="videoWrapper" style="height: 60vh;">
             <div class="video-container">
                 <video id="videoPlayer" class="hidden"></video>
+                <!-- Upload Zone -->
                 <div id="uploadPlaceholder" class="upload-zone">
-                    <div style="font-size: 40px; opacity: 0.5">📂</div>
-                    <button class="upload-btn" onclick="document.getElementById('videoUpload').click()">Выберите файл видео</button>
+                    <div style="font-size: 48px; opacity: 0.5">📂</div>
+                    <button class="upload-btn" onclick="document.getElementById('videoUpload').click()">Загрузить видео</button>
                     <input type="file" id="videoUpload" accept="video/*" style="display:none">
-                    <span style="font-size: 12px; opacity: 0.5">MP4, MOV, WEBM</span>
                 </div>
             </div>
             
-            <!-- Timeline (Seek Bar) -->
-            <div class="video-timeline-bar hidden" id="timelineBar">
-                <input type="range" id="seekBar" value="0" min="0" max="100" step="0.1">
-                <div class="time-display" id="timeDisplay">00:00 / 00:00</div>
+            <!-- Video Footer (Hidden until upload) -->
+            <div class="video-footer hidden" id="videoFooter">
+                
+                <!-- Timeline Slider -->
+                <div class="timeline-container">
+                    <input type="range" id="seekBar" value="0" min="0" max="100" step="0.1">
+                    <div class="time-display" id="timeDisplay">00:00 / 00:00</div>
+                </div>
+
+                <!-- Controls & Help -->
+                <div class="controls-row">
+                    <div class="controls-left">
+                        <button class="btn btn-secondary btn-sm" onclick="togglePlay()">⏯ Play/Pause</button>
+                        <button class="btn btn-secondary btn-sm" onclick="changeSpeed(1)">1x</button>
+                        <button class="btn btn-secondary btn-sm" onclick="changeSpeed(1.5)">1.5x</button>
+                        <button class="btn btn-secondary btn-sm" onclick="changeSpeed(2)">2x</button>
+                        
+                        <div class="size-control">
+                            🔍 Размер
+                            <input type="range" class="size-slider" id="sizeSlider" min="30" max="90" value="60" oninput="resizeVideo(this.value)">
+                        </div>
+                    </div>
+
+                    <!-- Instructions / Hotkeys (Visible here) -->
+                    <div class="shortcuts-info">
+                        <div><span class="key">Space</span> Play/Stop</div>
+                        <div><span class="key">I</span> In</div>
+                        <div><span class="key">O</span> Out</div>
+                        <div><span class="key">Enter</span> Add</div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Controls (Speed + Size) -->
-        <div class="controls-bar hidden" id="controls">
-            <button class="btn btn-secondary btn-sm" onclick="changeSpeed(1)">1x</button>
-            <button class="btn btn-secondary btn-sm" onclick="changeSpeed(1.5)">1.5x</button>
-            <button class="btn btn-secondary btn-sm" onclick="changeSpeed(2)">2x</button>
-            
-            <div class="size-control">
-                🔍 Размер видео
-                <input type="range" class="size-slider" id="sizeSlider" min="200" max="800" value="480" step="10" oninput="resizeVideo(this.value)">
-            </div>
-        </div>
-
+        <!-- Editor Form -->
         <div class="editor-card">
             <div class="type-tabs">
-                <div class="type-tab active" id="tab-cut" onclick="setEditType('cut')">✂️ По таймкоду</div>
-                <div class="type-tab" id="tab-general" onclick="setEditType('general')">📄 Общая правка</div>
+                <div class="type-tab active" id="tab-cut" onclick="setEditType('cut')">✂️ Таймкод</div>
+                <div class="type-tab" id="tab-general" onclick="setEditType('general')">📄 Общая</div>
             </div>
+            
             <div class="form-grid">
                 <div class="row" id="timeFields">
                     <div class="col">
                         <label>Начало (In)</label>
-                        <div class="input-wrapper time-input-group">
+                        <div class="time-input-group">
                             <input type="text" id="timeStart" placeholder="00:00:00" onfocus="pauseVideo()">
-                            <button class="time-capture-btn" onclick="captureTime('timeStart')" title="Вставить (I)">⏱</button>
+                            <button class="time-capture-btn" onclick="captureTime('timeStart')">⏱</button>
                         </div>
                     </div>
                     <div class="col">
                         <label>Конец (Out)</label>
-                        <div class="input-wrapper time-input-group">
+                        <div class="time-input-group">
                             <input type="text" id="timeEnd" placeholder="00:00:00" onfocus="pauseVideo()">
-                            <button class="time-capture-btn" onclick="captureTime('timeEnd')" title="Вставить (O)">⏱</button>
+                            <button class="time-capture-btn" onclick="captureTime('timeEnd')">⏱</button>
                         </div>
                     </div>
                 </div>
+                
                 <div class="row" id="wordsFields">
                     <div class="col"><label>Начало (слова)</label><input type="text" id="firstWords"></div>
                     <div class="col"><label>Конец (слова)</label><input type="text" id="lastWords"></div>
                 </div>
+                
                 <div class="col">
-                    <label id="actionLabel">Описание</label>
-                    <textarea id="action" placeholder="Что нужно сделать?" onkeydown="handleEnter(event)"></textarea>
+                    <label id="actionLabel">Описание правки</label>
+                    <textarea id="action" placeholder="Что нужно сделать?" onkeydown="handleEnter(event)" style="min-height: 60px;"></textarea>
                 </div>
-                <div class="row" style="margin-top: 8px;">
+                
+                <div class="row">
                     <button id="addBtn" class="btn btn-primary" style="flex: 1" onclick="addEdit()">➕ Добавить</button>
                     <button id="cancelBtn" class="btn btn-secondary hidden" onclick="resetForm()">Отмена</button>
                 </div>
@@ -405,10 +353,12 @@
 
     <div class="right-panel">
         <div class="panel-header">
-            <div class="panel-title">Список <span class="badge-count" id="count">0</span></div>
+            <div style="font-weight:600">Список (<span id="count">0</span>)</div>
             <button class="icon-btn danger" onclick="clearAll()">🗑</button>
         </div>
-        <div class="edits-list" id="editsList"><div class="empty-state">Список пуст</div></div>
+        <div class="edits-list" id="editsList">
+            <div style="text-align:center; color:var(--text-muted); margin-top:40px;">Нет правок</div>
+        </div>
         <div class="export-bar">
             <button class="btn btn-secondary" onclick="copyToClipboard()">📋 Текст</button>
             <button class="btn btn-secondary" onclick="exportSRT()">📄 SRT</button>
@@ -425,7 +375,7 @@
     const seekBar = document.getElementById('seekBar');
     const timeDisplay = document.getElementById('timeDisplay');
     const videoWrapper = document.getElementById('videoWrapper');
-    const STORAGE_KEY = 'videoLogicPro_v5';
+    const STORAGE_KEY = 'videoLogicPro_v8';
 
     document.addEventListener('DOMContentLoaded', () => {
         loadProject();
@@ -434,25 +384,26 @@
     });
 
     // --- UI Logic ---
+    function resizeVideo(val) {
+        videoWrapper.style.height = val + 'vh';
+    }
+
     function setEditType(type) {
         currentType = type;
         document.getElementById('tab-cut').classList.toggle('active', type === 'cut');
         document.getElementById('tab-general').classList.toggle('active', type === 'general');
-        document.getElementById('tab-general').classList.toggle('active-general', type === 'general');
         
         const isGen = type === 'general';
         document.getElementById('timeFields').classList.toggle('hidden', isGen);
         document.getElementById('wordsFields').classList.toggle('hidden', isGen);
-        document.getElementById('action').placeholder = isGen ? "Общий комментарий" : "Что нужно сделать?";
+        document.getElementById('action').placeholder = isGen ? "Общий комментарий к видео" : "Что изменить в этом моменте?";
     }
 
-    function resizeVideo(val) {
-        videoWrapper.style.height = val + 'px';
-    }
+    function togglePlay() { player.paused ? player.play() : player.pause(); }
 
     function setupVideoHandling() {
-        // Toggle Play/Pause on click
-        player.addEventListener('click', () => player.paused ? player.play() : player.pause());
+        // Play/Pause on Video Click
+        player.addEventListener('click', togglePlay);
 
         // Update timeline logic
         player.addEventListener('timeupdate', () => {
@@ -475,8 +426,7 @@
                 player.src = URL.createObjectURL(file);
                 player.classList.remove('hidden');
                 document.getElementById('uploadPlaceholder').classList.add('hidden');
-                document.getElementById('controls').classList.remove('hidden');
-                document.getElementById('timelineBar').classList.remove('hidden');
+                document.getElementById('videoFooter').classList.remove('hidden');
                 if(!document.getElementById('projectName').value) document.getElementById('projectName').value = file.name;
             }
         });
@@ -512,7 +462,7 @@
     function changeSpeed(rate) { player.playbackRate = rate; }
     function pauseVideo() { player.pause(); }
 
-    // --- CRUD ---
+    // --- CRUD & VALIDATION ---
     function addEdit() {
         const action = document.getElementById('action').value.trim();
         if (!action) return alert("Введите описание");
@@ -526,12 +476,25 @@
 
         if (currentType === 'cut') {
             const start = document.getElementById('timeStart').value;
-            if (!start) return alert("Укажите время");
+            const end = document.getElementById('timeEnd').value;
+            
+            if (!start) return alert("Укажите время начала");
+            
+            // --- VALIDATION ADDED HERE ---
+            const startSec = parseTime(start);
+            const endSec = parseTime(end);
+
+            if (end && startSec >= endSec) {
+                alert("Ошибка: Время НАЧАЛА (In) должно быть меньше времени КОНЦА (Out)!");
+                return; // Stop execution
+            }
+            // -----------------------------
+
             editData.timeStart = start;
-            editData.timeEnd = document.getElementById('timeEnd').value;
+            editData.timeEnd = end;
             editData.firstWords = document.getElementById('firstWords').value;
             editData.lastWords = document.getElementById('lastWords').value;
-            editData.seconds = parseTime(start);
+            editData.seconds = startSec;
         } else {
             editData.seconds = -1;
         }
@@ -604,7 +567,7 @@
         const list = document.getElementById('editsList');
         document.getElementById('count').textContent = edits.length;
         if (edits.length === 0) {
-            list.innerHTML = '<div class="empty-state">Список пуст</div>';
+            list.innerHTML = '<div style="text-align:center;color:var(--text-muted);margin-top:40px;">Список пуст</div>';
             return;
         }
         list.innerHTML = edits.map((item) => {
@@ -612,20 +575,20 @@
             const contextStr = (item.firstWords || item.lastWords) ? 
                 `<div class="card-context">${item.firstWords || ''} ... ${item.lastWords || ''}</div>` : '';
             
-            const header = isGeneral ? `<span class="general-badge">ОБЩАЯ</span>` : 
-                `<div class="timestamp-badge">⏱ ${item.timeStart}</div>` + (item.timeEnd ? `<div class="timestamp-badge" style="margin-left:4px">➝ ${item.timeEnd}</div>` : '');
+            const header = isGeneral ? `<span style="font-size:10px; font-weight:bold; color:#fcd34d; background:rgba(251,191,36,0.1); padding:2px 6px; border-radius:4px;">ОБЩАЯ</span>` : 
+                `<span class="timestamp-badge">⏱ ${item.timeStart}</span>` + (item.timeEnd ? `<span class="timestamp-badge" style="margin-left:4px">➝ ${item.timeEnd}</span>` : '');
 
             return `<div class="edit-card type-${item.type} ${item.id === editingId ? 'editing' : ''}" 
                      onclick="${!isGeneral ? `jumpTo('${item.timeStart}')` : ''}">
                     <div class="card-header">
-                        <div style="display:flex; align-items:center">${header}</div>
+                        <div>${header}</div>
                         <div class="card-actions">
                             <button class="icon-btn" onclick="event.stopPropagation(); editItem(${item.id})">✏️</button>
                             <button class="icon-btn danger" onclick="event.stopPropagation(); deleteItem(${item.id})">🗑</button>
                         </div>
                     </div>
                     ${contextStr}
-                    <div class="card-text">${item.action}</div>
+                    <div style="font-size:13px; line-height:1.4">${item.action}</div>
                 </div>`;
         }).join('');
     }
