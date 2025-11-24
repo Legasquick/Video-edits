@@ -3,581 +3,677 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Составление правок к видео</title>
+    <title>Video Feedback Pro 2.2</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
-        .container { max-width: 900px; margin: 0 auto; background: white; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden; }
-        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; }
-        .header h1 { font-size: 28px; margin-bottom: 10px; }
-        .header p { opacity: 0.9; font-size: 14px; }
-        .content { padding: 30px; }
-        .project-name-container, .video-player-container { background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 2px solid #e9ecef; }
-        .edit-form { background: #f8f9fa; padding: 25px; border-radius: 12px; margin-bottom: 25px; border: 2px solid #e9ecef; }
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 6px; font-weight: 600; color: #495057; font-size: 14px; }
-        input, textarea { width: 100%; padding: 12px; border: 2px solid #dee2e6; border-radius: 8px; font-size: 14px; transition: all 0.3s; font-family: inherit; }
-        input:focus, textarea:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); padding-left: 11px; border-left-width: 3px; }
-        .input-error { border-color: #dc3545 !important; box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1) !important; }
-        textarea { resize: vertical; min-height: 80px; }
-        .toggle-container { background-color: #e9ecef; padding: 10px 15px; border-radius: 8px; margin-bottom: 15px; display: flex; align-items: center; cursor: pointer; }
-        .toggle-container input { width: auto; margin-right: 10px; }
-        .toggle-container label { margin-bottom: 0; font-weight: normal; }
-        .btn { padding: 12px 24px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s; text-transform: uppercase; letter-spacing: 0.5px; }
-        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3); }
-        .btn-secondary { background: #6c757d; color: white; }
-        .btn-secondary:hover { background: #5a6268; }
-        .btn-success { background: #28a745; color: white; }
-        .btn-success:hover { background: #218838; }
-        .btn-export { background: #17a2b8; color: white; }
-        .btn-export:hover { background: #138496; }
-        .btn-danger { background: #dc3545; color: white; padding: 8px 16px; font-size: 12px; }
-        .btn-danger:hover { background: #c82333; }
-        .btn-info { background: #17a2b8; color: white; padding: 8px 16px; font-size: 12px; }
-        .btn-info:hover { background: #138496; }
-        .input-with-button { display: flex; align-items: center; gap: 8px; }
-        .btn-copy-time { padding: 10px 12px; border: none; background: #e9ecef; color: #495057; border-radius: 8px; cursor: pointer; font-size: 14px; transition: background 0.2s; }
-        .btn-copy-time:hover { background: #dee2e6; }
-        .edits-list { margin-top: 30px; }
-        .edit-item { background: white; padding: 20px; border-radius: 12px; margin-bottom: 15px; border: 2px solid #e9ecef; transition: all 0.3s; position: relative; }
-        .edit-item:hover { border-color: #667eea; box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1); }
-        .edit-item.editing { border-color: #28a745; box-shadow: 0 0 10px rgba(40, 167, 69, 0.2); }
-        .edit-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-        .edit-item-header .buttons { display: flex; gap: 8px; }
-        .edit-number { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 6px 12px; border-radius: 20px; font-weight: 600; font-size: 14px; }
-        .edit-item.general-edit .edit-number { background: #6c757d; }
-        .edit-content { font-size: 14px; color: #495057; line-height: 1.6; }
-        .edit-content strong { color: #212529; }
-        .button-group { margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
-        .main-form-buttons { display: flex; gap: 10px; align-items: center; }
-        .empty-state { text-align: center; padding: 40px; color: #6c757d; }
-        .empty-state-icon { font-size: 48px; margin-bottom: 15px; }
-        .type-selector { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 20px; }
-        .type-option { padding: 15px; border: 2px solid #dee2e6; border-radius: 8px; cursor: pointer; text-align: center; transition: all 0.3s; background: white; }
-        .type-option:hover { border-color: #667eea; background: #f8f9ff; }
-        .type-option.active { border-color: #667eea; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
-        .type-option-title { font-weight: 600; margin-bottom: 5px; }
-        .type-option-desc { font-size: 12px; opacity: 0.8; }
-        @media (max-width: 768px) { .form-row { grid-template-columns: 1fr; } .button-group { flex-direction: column; } }
-        .instructions-toggle { background: #e9ecef; padding: 15px; border-radius: 8px; margin-bottom: 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
-        .instructions-toggle:hover { background: #dee2e6; }
-        .instructions-content { display: none; padding: 20px; background: #f8f9fa; border-radius: 8px; margin-bottom: 20px; font-size: 14px; line-height: 1.8; }
-        .instructions-content.show { display: block; }
-        .instructions-content h3 { color: #667eea; margin-top: 15px; margin-bottom: 10px; }
-        .instructions-content ul { margin-left: 20px; }
-        .instructions-content li { margin-bottom: 8px; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+        :root {
+            /* Palette */
+            --bg-main: #0f172a;       
+            --bg-secondary: #1e293b;  
+            --bg-input: #334155;      
+            --bg-hover: #475569;
+            
+            --primary: #6366f1;       
+            --primary-hover: #4f46e5;
+            
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            
+            --border: #334155;
+            --border-focus: #818cf8;
+            
+            --danger: #ef4444;
+            --success: #10b981;
+            --warning: #f59e0b;
+            
+            --radius: 12px;
+            --radius-sm: 6px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg-main); 
+            color: var(--text-main); 
+            height: 100vh; 
+            overflow: hidden;
+            font-size: 14px;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--bg-input); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+        /* --- Layout --- */
+        .app-container {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            grid-template-rows: 60px 1fr;
+            height: 100vh;
+            background-color: var(--bg-main);
+        }
+
+        /* --- Header --- */
+        .header {
+            grid-column: 1 / -1;
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            z-index: 10;
+        }
+
+        .brand {
+            display: flex; align-items: center; gap: 12px;
+            font-weight: 600; font-size: 18px; color: var(--text-main);
+        }
+        .brand span { background: linear-gradient(135deg, #6366f1, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .project-input {
+            background: var(--bg-main); border: 1px solid var(--border);
+            color: var(--text-main); padding: 8px 16px; border-radius: var(--radius-sm); 
+            width: 320px; transition: all 0.2s; font-family: inherit;
+        }
+        .project-input:focus { border-color: var(--border-focus); box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2); }
+
+        /* --- Left Panel (Video & Editor) --- */
+        .left-panel {
+            padding: 24px;
+            overflow-y: auto;
+            display: flex; flex-direction: column; gap: 16px;
+        }
+
+        /* Video Area */
+        .video-wrapper {
+            background: #000;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            display: flex; flex-direction: column;
+            overflow: hidden;
+            transition: height 0.2s ease;
+        }
+
+        .video-container {
+            position: relative;
+            flex: 1;
+            display: flex; align-items: center; justify-content: center;
+            background: #000;
+            min-height: 200px;
+        }
+        
+        video { 
+            width: 100%; 
+            height: 100%; 
+            display: block; 
+            cursor: pointer; 
+        }
+
+        /* Timeline Bar */
+        .video-timeline-bar {
+            background: var(--bg-secondary);
+            padding: 8px 16px;
+            display: flex; align-items: center; gap: 12px;
+            border-top: 1px solid var(--border);
+        }
+
+        .time-display {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px; color: var(--text-muted);
+            white-space: nowrap;
+            min-width: 90px;
+            text-align: right;
+        }
+
+        /* Range Slider Styling (Seek Bar) */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+            cursor: pointer;
+            height: 16px;
+        }
+        input[type=range]:focus { outline: none; border: none; box-shadow: none; }
+        
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%; height: 4px; cursor: pointer;
+            background: var(--bg-input); border-radius: 2px;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            height: 14px; width: 14px; border-radius: 50%;
+            background: var(--primary); cursor: pointer;
+            -webkit-appearance: none; margin-top: -5px;
+            transition: transform 0.1s;
+        }
+        input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); background: var(--primary-hover); }
+
+        /* Controls & Size Slider */
+        .controls-bar {
+            display: flex; gap: 12px; align-items: center;
+            background: var(--bg-secondary); padding: 10px 16px;
+            border-radius: var(--radius); border: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+        
+        .size-control {
+            display: flex; align-items: center; gap: 8px; margin-left: auto;
+            font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;
+        }
+        .size-slider { width: 80px !important; }
+
+        .upload-zone {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 15px; color: var(--text-muted); z-index: 5;
+        }
+        .upload-btn {
+            background: var(--primary); color: white; padding: 10px 24px; 
+            border-radius: var(--radius-sm); cursor: pointer; border: none; 
+            font-weight: 500; transition: 0.2s;
+        }
+        .upload-btn:hover { background: var(--primary-hover); transform: translateY(-1px); }
+
+        /* Form Area */
+        .editor-card {
+            background-color: var(--bg-secondary);
+            padding: 24px; border-radius: var(--radius);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+
+        /* Segmented Control Tabs */
+        .type-tabs { 
+            display: flex; background: var(--bg-main); padding: 4px; 
+            border-radius: var(--radius-sm); margin-bottom: 20px; 
+            width: fit-content; border: 1px solid var(--border);
+        }
+        .type-tab {
+            padding: 6px 20px; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 500;
+            color: var(--text-muted); transition: 0.2s; user-select: none;
+        }
+        .type-tab:hover { color: var(--text-main); }
+        .type-tab.active { background: var(--bg-input); color: var(--text-main); shadow: 0 1px 2px rgba(0,0,0,0.2); }
+        .type-tab.active-general { background: var(--bg-input); color: var(--text-main); }
+
+        /* Inputs */
+        .form-grid { display: grid; gap: 16px; }
+        .row { display: flex; gap: 16px; }
+        .col { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+
+        label { font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        .input-wrapper { position: relative; }
+        
+        input[type="text"], textarea {
+            width: 100%; background: var(--bg-input); border: 1px solid transparent;
+            color: white; padding: 10px 12px; border-radius: var(--radius-sm); 
+            font-size: 14px; font-family: inherit; transition: 0.2s;
+        }
+        input[type="text"]:focus, textarea:focus { 
+            border-color: var(--primary); background: var(--bg-main);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        }
+        textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
+
+        .time-input-group input { padding-right: 40px; font-family: 'JetBrains Mono', monospace; }
+        .time-capture-btn {
+            position: absolute; right: 4px; top: 4px; bottom: 4px;
+            width: 32px; border: none; border-radius: 4px;
+            background: var(--bg-secondary); color: var(--text-main);
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            font-size: 14px; transition: 0.2s;
+        }
+        .time-capture-btn:hover { background: var(--primary); color: white; }
+
+        /* Action Buttons */
+        .btn {
+            padding: 10px 20px; border: none; border-radius: var(--radius-sm); 
+            cursor: pointer; font-weight: 600; font-size: 14px; 
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            transition: all 0.2s ease;
+        }
+        .btn-primary { background: linear-gradient(135deg, var(--primary), #4f46e5); color: white; box-shadow: 0 2px 4px rgba(99, 102, 241, 0.3); }
+        .btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
+        
+        .btn-secondary { background: var(--bg-input); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-secondary:hover { background: var(--bg-hover); color: white; border-color: var(--text-muted); }
+        .btn-sm { padding: 6px 12px; font-size: 12px; height: 32px; }
+
+        /* --- Right Panel (List) --- */
+        .right-panel {
+            background-color: var(--bg-secondary);
+            border-left: 1px solid var(--border);
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(10px);
+        }
+        .panel-title { font-size: 14px; font-weight: 600; color: var(--text-main); }
+        .badge-count { background: var(--bg-input); padding: 2px 8px; border-radius: 10px; font-size: 11px; margin-left: 8px; }
+
+        .edits-list { 
+            flex: 1; padding: 16px; overflow-y: auto; 
+            display: flex; flex-direction: column; gap: 12px;
+        }
+
+        .edit-card {
+            background: var(--bg-main); border: 1px solid var(--border); 
+            border-radius: var(--radius-sm); padding: 14px;
+            position: relative; transition: 0.2s; cursor: pointer;
+            border-left: 3px solid transparent;
+        }
+        .edit-card:hover { transform: translateX(4px); border-color: var(--border-focus); }
+        .edit-card.type-cut { border-left-color: var(--primary); }
+        .edit-card.type-general { border-left-color: var(--warning); }
+        .edit-card.editing { border-color: var(--warning); box-shadow: 0 0 0 1px var(--warning) inset; }
+
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+        .timestamp-badge { 
+            background: rgba(99, 102, 241, 0.15); color: #a5b4fc; 
+            padding: 4px 8px; border-radius: 4px; 
+            font-size: 11px; font-family: 'JetBrains Mono', monospace; font-weight: 500;
+            display: inline-flex; align-items: center; gap: 4px;
+        }
+        .general-badge {
+            background: rgba(245, 158, 11, 0.15); color: #fcd34d;
+            padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
+        }
+        .card-context { 
+            font-size: 12px; color: var(--text-muted); margin-bottom: 8px; 
+            padding: 8px; background: var(--bg-secondary); border-radius: 4px; 
+            border-left: 2px solid var(--bg-input); font-style: italic;
+        }
+        .card-text { font-size: 14px; line-height: 1.5; color: var(--text-main); white-space: pre-wrap; }
+        
+        .card-actions { 
+            display: flex; gap: 4px; opacity: 0; transition: 0.2s; 
+            position: absolute; top: 10px; right: 10px;
+            background: var(--bg-main); padding-left: 10px;
+        }
+        .edit-card:hover .card-actions { opacity: 1; }
+        
+        .icon-btn {
+            width: 24px; height: 24px; border-radius: 4px; border: 1px solid var(--border);
+            background: var(--bg-secondary); color: var(--text-muted);
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+        }
+        .icon-btn:hover { color: var(--text-main); border-color: var(--text-muted); }
+        .icon-btn.danger:hover { background: var(--danger); color: white; border-color: var(--danger); }
+
+        .export-bar { padding: 16px; background: var(--bg-secondary); border-top: 1px solid var(--border); display: flex; gap: 10px; }
+        .export-bar button { flex: 1; }
+        .hidden { display: none !important; }
+        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 0.8; } 100% { opacity: 0.5; } }
+        .empty-state { text-align: center; color: var(--text-muted); margin-top: 60px; animation: pulse 3s infinite; }
+
+        @media (max-width: 900px) {
+            .app-container { grid-template-columns: 1fr; grid-template-rows: auto auto 1fr; }
+            .right-panel { border-left: none; border-top: 1px solid var(--border); }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>📹 Составление правок к видео</h1>
-            <p>Создайте правки в удобном формате для быстрого монтажа</p>
+
+<div class="app-container">
+    <header class="header">
+        <div class="brand"><span>📹</span> Video Logic Pro</div>
+        <input type="text" id="projectName" class="project-input" placeholder="Название проекта / Видео">
+    </header>
+
+    <div class="left-panel">
+        <!-- Wrapper controls the size -->
+        <div class="video-wrapper" id="videoWrapper" style="height: 480px;">
+            <div class="video-container">
+                <video id="videoPlayer" class="hidden"></video>
+                <div id="uploadPlaceholder" class="upload-zone">
+                    <div style="font-size: 40px; opacity: 0.5">📂</div>
+                    <button class="upload-btn" onclick="document.getElementById('videoUpload').click()">Выберите файл видео</button>
+                    <input type="file" id="videoUpload" accept="video/*" style="display:none">
+                    <span style="font-size: 12px; opacity: 0.5">MP4, MOV, WEBM</span>
+                </div>
+            </div>
+            
+            <!-- Timeline (Seek Bar) -->
+            <div class="video-timeline-bar hidden" id="timelineBar">
+                <input type="range" id="seekBar" value="0" min="0" max="100" step="0.1">
+                <div class="time-display" id="timeDisplay">00:00 / 00:00</div>
+            </div>
         </div>
 
-        <div class="content">
-            <div class="instructions-toggle" onclick="toggleInstructions()">
-                <strong>📖 Инструкция по работе с правками</strong>
-                <span id="toggle-icon">▼</span>
+        <!-- Controls (Speed + Size) -->
+        <div class="controls-bar hidden" id="controls">
+            <button class="btn btn-secondary btn-sm" onclick="changeSpeed(1)">1x</button>
+            <button class="btn btn-secondary btn-sm" onclick="changeSpeed(1.5)">1.5x</button>
+            <button class="btn btn-secondary btn-sm" onclick="changeSpeed(2)">2x</button>
+            
+            <div class="size-control">
+                🔍 Размер видео
+                <input type="range" class="size-slider" id="sizeSlider" min="200" max="800" value="480" step="10" oninput="resizeVideo(this.value)">
             </div>
-            <div class="instructions-content" id="instructions"></div>
+        </div>
 
-            <div class="project-name-container">
-                <div class="form-group">
-                    <label for="projectName">Название проекта</label>
-                    <input type="text" id="projectName" placeholder="Например, 'Ролик для YouTube #5'">
-                </div>
+        <div class="editor-card">
+            <div class="type-tabs">
+                <div class="type-tab active" id="tab-cut" onclick="setEditType('cut')">✂️ По таймкоду</div>
+                <div class="type-tab" id="tab-general" onclick="setEditType('general')">📄 Общая правка</div>
             </div>
-
-            <div class="video-player-container">
-                <div class="form-group">
-                    <label for="videoUpload">Загрузить видео для разметки</label>
-                    <input type="file" id="videoUpload" accept="video/*" style="padding: 10px; width: 100%;">
-                </div>
-                <video id="videoPlayer" controls width="100%" style="border-radius: 12px; margin-top: 10px; display: none; background: #000;"></video>
-            </div>
-
-            <div class="edit-form">
-                <div class="type-selector">
-                    <div class="type-option active" onclick="selectType('cut')" data-type="cut">
-                        <div class="type-option-title">✂️ Вырезать / Другое</div>
-                        <div class="type-option-desc">Удалить или изменить фрагмент</div>
-                    </div>
-                    <div class="type-option" onclick="selectType('general')" data-type="general">
-                        <div class="type-option-title">📄 Общая</div>
-                        <div class="type-option-desc">Ко всему видео</div>
-                    </div>
-                </div>
-
-                <div class="toggle-container" id="no-end-timecode-toggle">
-                    <input type="checkbox" id="noEndTimecode" onchange="toggleTimeEndField()">
-                    <label for="noEndTimecode">Без конечного таймкода (правка в одной точке)</label>
-                </div>
-                
-                <div class="form-row" id="timecodeRow">
-                    <div class="form-group">
-                        <label for="timeStart">Таймкод начала ((Ч:)ММ:СС)</label>
-                         <div class="input-with-button">
-                            <input type="text" id="timeStart" placeholder="1:23:45 или 23:45" onblur="formatTimecode(this)" onfocus="this.classList.remove('input-error')">
-                            <button class="btn-copy-time" onclick="copyTimestamp('timeStart')" title="Копировать текущее время видео">📋</button>
+            <div class="form-grid">
+                <div class="row" id="timeFields">
+                    <div class="col">
+                        <label>Начало (In)</label>
+                        <div class="input-wrapper time-input-group">
+                            <input type="text" id="timeStart" placeholder="00:00:00" onfocus="pauseVideo()">
+                            <button class="time-capture-btn" onclick="captureTime('timeStart')" title="Вставить (I)">⏱</button>
                         </div>
                     </div>
-                    <div class="form-group" id="timeEndGroup">
-                        <label for="timeEnd">Таймкод конца ((Ч:)ММ:СС)</label>
-                        <div class="input-with-button">
-                            <input type="text" id="timeEnd" placeholder="1:23:55 или 23:55" onblur="formatTimecode(this)" onfocus="this.classList.remove('input-error')">
-                            <button class="btn-copy-time" onclick="copyTimestamp('timeEnd')" title="Копировать текущее время видео">📋</button>
+                    <div class="col">
+                        <label>Конец (Out)</label>
+                        <div class="input-wrapper time-input-group">
+                            <input type="text" id="timeEnd" placeholder="00:00:00" onfocus="pauseVideo()">
+                            <button class="time-capture-btn" onclick="captureTime('timeEnd')" title="Вставить (O)">⏱</button>
                         </div>
                     </div>
                 </div>
-                
-                <div class="form-group" id="firstWordsGroup">
-                    <label for="firstWords" id="firstWordsLabel">Первые три слова фрагмента</label>
-                    <input type="text" id="firstWords" placeholder="Сегодня мы поговорим">
+                <div class="row" id="wordsFields">
+                    <div class="col"><label>Начало (слова)</label><input type="text" id="firstWords"></div>
+                    <div class="col"><label>Конец (слова)</label><input type="text" id="lastWords"></div>
                 </div>
-                <div class="form-group" id="lastWordsGroup">
-                    <label for="lastWords">Последние три слова фрагмента</label>
-                    <input type="text" id="lastWords" placeholder="очень важный момент">
+                <div class="col">
+                    <label id="actionLabel">Описание</label>
+                    <textarea id="action" placeholder="Что нужно сделать?" onkeydown="handleEnter(event)"></textarea>
                 </div>
-                
-                <div class="form-group">
-                    <label for="action" id="actionLabel">Что делаем (описание правки)</label>
-                    <textarea id="action" placeholder="Вырезать"></textarea>
+                <div class="row" style="margin-top: 8px;">
+                    <button id="addBtn" class="btn btn-primary" style="flex: 1" onclick="addEdit()">➕ Добавить</button>
+                    <button id="cancelBtn" class="btn btn-secondary hidden" onclick="resetForm()">Отмена</button>
                 </div>
-                <div class="main-form-buttons">
-                    <button class="btn btn-primary" id="addEditBtn" onclick="addOrUpdateEdit()">➕ Добавить правку</button>
-                    <button class="btn btn-secondary" id="cancelEditBtn" onclick="cancelEdit()" style="display: none;">Отмена</button>
-                </div>
-            </div>
-
-            <div class="edits-list" id="editsList"></div>
-
-            <div class="button-group" id="actionButtons" style="display: none;">
-                <button class="btn btn-success" onclick="copyToClipboard()">📋 Скопировать</button>
-                <button class="btn btn-export" onclick="exportToSrt()">📄 Экспорт в .SRT</button>
-                <button class="btn btn-secondary" onclick="clearAll()">🗑️ Очистить всё</button>
             </div>
         </div>
     </div>
 
-    <script>
-        let edits = [];
-        let currentType = 'cut';
-        let currentlyEditingId = null;
-        const PROJECT_STORAGE_KEY = 'videoEditorProject';
+    <div class="right-panel">
+        <div class="panel-header">
+            <div class="panel-title">Список <span class="badge-count" id="count">0</span></div>
+            <button class="icon-btn danger" onclick="clearAll()">🗑</button>
+        </div>
+        <div class="edits-list" id="editsList"><div class="empty-state">Список пуст</div></div>
+        <div class="export-bar">
+            <button class="btn btn-secondary" onclick="copyToClipboard()">📋 Текст</button>
+            <button class="btn btn-secondary" onclick="exportSRT()">📄 SRT</button>
+        </div>
+    </div>
+</div>
 
-        document.addEventListener('DOMContentLoaded', () => {
-            loadProject();
-            selectType(currentType); 
-            setupEnterNavigation();
-            setupVideoPlayer();
-            document.getElementById('projectName').addEventListener('input', saveProject);
-            
-            document.getElementById('instructions').innerHTML = `
-                <p>Добро пожаловать! Этот инструмент поможет вам быстро и удобно составлять правки для видеомонтажа.</p>
-                <h3>✨ Новые возможности</h3>
-                <ul>
-                    <li><strong>Загрузка видео:</strong> Загрузите свой видеофайл, чтобы видеть контекст и легко копировать таймкоды.</li>
-                    <li><strong>Копирование таймкодов:</strong> Нажмите на иконку 📋 рядом с полем времени, чтобы вставить текущий таймкод из плеера.</li>
-                </ul>
-                <h3>🚀 Быстрый старт и полезные трюки</h3>
-                <ul>
-                    <li><strong>Умный ввод таймкода:</strong> Вам не обязательно ставить двоеточия. Просто введите цифры, и система сама их расставит:
-                        <ul>
-                            <li><code>123</code> → <code>00:01:23</code></li>
-                            <li><code>12345</code> → <code>01:23:45</code></li>
-                        </ul>
-                    </li>
-                    <li><strong>Навигация через Enter:</strong> Нажимайте клавишу <code>Enter</code> для быстрого перехода к следующему полю. Нажатие <code>Enter</code> в последнем поле "Что делаем" автоматически добавит или сохранит правку.</li>
-                </ul>
-                <h3>📝 Описание Типов Правок</h3>
-                <ul>
-                    <li><strong>✂️ Вырезать / Другое:</strong> Для удаления или изменения фрагмента (звук, цвет, эффекты).
-                        <ul>
-                            <li><strong>Обычный режим:</strong> Требует указать начало и конец фрагмента.</li>
-                            <li><strong>Режим "Без конечного таймкода":</strong> Правка для одной точки во времени. Поля конца исчезают, а "Первые слова" становятся необязательными.</li>
-                        </ul>
-                    </li>
-                    <li><strong>📄 Общая:</strong> Комментарии ко всему видео. Не требуют таймкодов и всегда отображаются вверху списка.</li>
-                </ul>
-                <h3>💾 Сохранение</h3>
-                <p>Вся ваша работа автоматически сохраняется в браузере. Вы можете закрыть вкладку и вернуться позже.</p>
-            `;
+<script>
+    // --- State ---
+    let edits = [];
+    let currentType = 'cut'; 
+    let editingId = null;
+    const player = document.getElementById('videoPlayer');
+    const seekBar = document.getElementById('seekBar');
+    const timeDisplay = document.getElementById('timeDisplay');
+    const videoWrapper = document.getElementById('videoWrapper');
+    const STORAGE_KEY = 'videoLogicPro_v5';
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadProject();
+        setupVideoHandling();
+        setupHotkeys();
+    });
+
+    // --- UI Logic ---
+    function setEditType(type) {
+        currentType = type;
+        document.getElementById('tab-cut').classList.toggle('active', type === 'cut');
+        document.getElementById('tab-general').classList.toggle('active', type === 'general');
+        document.getElementById('tab-general').classList.toggle('active-general', type === 'general');
+        
+        const isGen = type === 'general';
+        document.getElementById('timeFields').classList.toggle('hidden', isGen);
+        document.getElementById('wordsFields').classList.toggle('hidden', isGen);
+        document.getElementById('action').placeholder = isGen ? "Общий комментарий" : "Что нужно сделать?";
+    }
+
+    function resizeVideo(val) {
+        videoWrapper.style.height = val + 'px';
+    }
+
+    function setupVideoHandling() {
+        // Toggle Play/Pause on click
+        player.addEventListener('click', () => player.paused ? player.play() : player.pause());
+
+        // Update timeline logic
+        player.addEventListener('timeupdate', () => {
+            if (!player.duration) return;
+            const percent = (player.currentTime / player.duration) * 100;
+            seekBar.value = percent;
+            timeDisplay.textContent = formatTimeSimple(player.currentTime) + " / " + formatTimeSimple(player.duration);
         });
-        
-        function setupVideoPlayer() {
-            document.getElementById('videoUpload').addEventListener('change', function(event) {
-                const videoPlayer = document.getElementById('videoPlayer');
-                const file = event.target.files[0];
-                if (file) {
-                    const fileURL = URL.createObjectURL(file);
-                    videoPlayer.src = fileURL;
-                    videoPlayer.style.display = 'block';
-                }
-            });
-        }
 
-        function copyTimestamp(targetId) {
-            const videoPlayer = document.getElementById('videoPlayer');
-            if (!videoPlayer || !videoPlayer.src) {
-                alert('Сначала загрузите видео.');
-                return;
+        // Seek logic
+        seekBar.addEventListener('input', () => {
+            if (!player.duration) return;
+            const time = (seekBar.value / 100) * player.duration;
+            player.currentTime = time;
+        });
+
+        document.getElementById('videoUpload').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                player.src = URL.createObjectURL(file);
+                player.classList.remove('hidden');
+                document.getElementById('uploadPlaceholder').classList.add('hidden');
+                document.getElementById('controls').classList.remove('hidden');
+                document.getElementById('timelineBar').classList.remove('hidden');
+                if(!document.getElementById('projectName').value) document.getElementById('projectName').value = file.name;
             }
-            const currentTime = Math.floor(videoPlayer.currentTime);
-            const formattedTime = secondsToTimecode(currentTime);
-            const targetInput = document.getElementById(targetId);
-            targetInput.value = formattedTime;
-            targetInput.focus();
+        });
+    }
+
+    // --- Time Helpers ---
+    function formatTimeSimple(seconds) {
+        if (isNaN(seconds)) return "00:00";
+        const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+        const s = Math.floor(seconds % 60).toString().padStart(2, '0');
+        return `${m}:${s}`;
+    }
+
+    function formatTime(seconds) {
+        if (isNaN(seconds)) return "00:00:00";
+        const h = Math.floor(seconds / 3600).toString().padStart(2, '0');
+        const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
+        const s = Math.floor(seconds % 60).toString().padStart(2, '0');
+        return `${h}:${m}:${s}`;
+    }
+
+    function parseTime(timeStr) {
+        if (!timeStr) return 0;
+        const parts = timeStr.split(':').map(Number);
+        return (parts[0] * 3600) + (parts[1] * 60) + parts[2];
+    }
+
+    function captureTime(fieldId) {
+        if (!player.src) return alert("Сначала загрузите видео");
+        document.getElementById(fieldId).value = formatTime(player.currentTime);
+    }
+
+    function changeSpeed(rate) { player.playbackRate = rate; }
+    function pauseVideo() { player.pause(); }
+
+    // --- CRUD ---
+    function addEdit() {
+        const action = document.getElementById('action').value.trim();
+        if (!action) return alert("Введите описание");
+
+        const editData = {
+            id: editingId || Date.now(),
+            type: currentType,
+            action: action,
+            timestamp: Date.now()
+        };
+
+        if (currentType === 'cut') {
+            const start = document.getElementById('timeStart').value;
+            if (!start) return alert("Укажите время");
+            editData.timeStart = start;
+            editData.timeEnd = document.getElementById('timeEnd').value;
+            editData.firstWords = document.getElementById('firstWords').value;
+            editData.lastWords = document.getElementById('lastWords').value;
+            editData.seconds = parseTime(start);
+        } else {
+            editData.seconds = -1;
         }
 
-        function saveProject() { const projectData = { projectName: document.getElementById('projectName').value, edits: edits }; localStorage.setItem(PROJECT_STORAGE_KEY, JSON.stringify(projectData)); };
-        function loadProject() { const savedData = localStorage.getItem(PROJECT_STORAGE_KEY); if (savedData) { const projectData = JSON.parse(savedData); edits = projectData.edits || []; document.getElementById('projectName').value = projectData.projectName || ''; renderEdits(); } };
-        const fieldOrder = ['timeStart', 'timeEnd', 'firstWords', 'lastWords', 'action'];
-        function handleEnterNavigation(event) { if (event.key === 'Enter') { if (event.target.tagName === 'TEXTAREA' && event.shiftKey) { return; } event.preventDefault(); if (event.target.id === 'action') { addOrUpdateEdit(); return; } const isNoEndTime = document.getElementById('noEndTimecode').checked; const currentId = event.target.id; let currentIndex = fieldOrder.indexOf(currentId); if (isNoEndTime && currentId === 'timeStart') { currentIndex = fieldOrder.indexOf('firstWords'); } else { currentIndex++; } const nextId = fieldOrder[currentIndex]; const nextElement = document.getElementById(nextId); if (nextElement) { nextElement.focus(); } } };
-        function setupEnterNavigation() { fieldOrder.forEach(fieldId => { const el = document.getElementById(fieldId); if(el) el.addEventListener('keydown', handleEnterNavigation); }); };
-        function toggleInstructions() { const instructions = document.getElementById('instructions'); const icon = document.getElementById('toggle-icon'); instructions.classList.toggle('show'); icon.textContent = instructions.classList.contains('show') ? '▲' : '▼'; };
-        function deleteEdit(id) { if(currentlyEditingId === id) cancelEdit(); edits = edits.filter(edit => edit.id !== id); saveProject(); renderEdits(); };
-        function clearAll() { if (confirm('Вы уверены, что хотите удалить все правки и название проекта?')) { edits = []; document.getElementById('projectName').value = ''; saveProject(); renderEdits(); cancelEdit(); } };
-
-        function parseAndFormatTimecode(value) {
-            if (!value) return '';
-            const hasColons = String(value).includes(':');
-            let h = '00', m = '00', s = '00';
-
-            if (hasColons) {
-                const parts = String(value).split(':').map(p => p.padStart(2, '0'));
-                if (parts.length === 3) [h, m, s] = parts;
-                else if (parts.length === 2) [m, s] = parts;
-            } else {
-                const clean = String(value).replace(/[^\d]/g, '');
-                if (clean.length <= 2) {
-                    s = clean.padStart(2, '0');
-                } else if (clean.length <= 4) {
-                    m = clean.slice(0, -2).padStart(2, '0');
-                    s = clean.slice(-2).padStart(2, '0');
-                } else {
-                    const padded = clean.padStart(6, '0');
-                    h = padded.slice(0, -4).padStart(2, '0');
-                    m = padded.slice(-4, -2).padStart(2, '0');
-                    s = padded.slice(-2).padStart(2, '0');
-                }
-            }
-            return `${h}:${m}:${s}`;
+        if (editingId) {
+            const idx = edits.findIndex(e => e.id === editingId);
+            edits[idx] = editData;
+        } else {
+            edits.push(editData);
         }
 
-        function formatTimecode(input) {
-            if (input.value) {
-                input.value = parseAndFormatTimecode(input.value);
-            }
+        edits.sort((a, b) => {
+            if (a.type === 'general' && b.type !== 'general') return -1;
+            if (a.type !== 'general' && b.type === 'general') return 1;
+            return a.seconds - b.seconds;
+        });
+
+        saveProject();
+        renderEdits();
+        resetForm();
+    }
+
+    function editItem(id) {
+        const item = edits.find(e => e.id === id);
+        if (!item) return;
+        setEditType(item.type);
+        editingId = id;
+        document.getElementById('action').value = item.action;
+        if (item.type === 'cut') {
+            document.getElementById('timeStart').value = item.timeStart;
+            document.getElementById('timeEnd').value = item.timeEnd || '';
+            document.getElementById('firstWords').value = item.firstWords || '';
+            document.getElementById('lastWords').value = item.lastWords || '';
         }
+        document.getElementById('addBtn').textContent = "💾 Сохранить";
+        document.getElementById('cancelBtn').classList.remove('hidden');
+    }
 
-        function timecodeToSeconds(timecode) {
-            if (!timecode || !timecode.includes(':')) return 0;
-            const [h, m, s] = timecode.split(':').map(Number);
-            return (h * 3600) + (m * 60) + s;
-        }
-        
-        function secondsToTimecode(totalSeconds) {
-            const h = Math.floor(totalSeconds / 3600);
-            const m = Math.floor((totalSeconds % 3600) / 60);
-            const s = totalSeconds % 60;
-            const pad = (num) => String(num).padStart(2, '0');
-            return `${pad(h)}:${pad(m)}:${pad(s)}`;
-        }
-
-        function isValidTimecode(timecode) {
-            if (!timecode) return false;
-            const parts = timecode.split(':');
-            if (parts.length !== 3) return false;
-            const [h, m, s] = parts.map(Number);
-            return !(isNaN(h) || isNaN(m) || isNaN(s) || m > 59 || s > 59);
-        }
-
-        function validateAllTimecodes() {
-            const startInput = document.getElementById('timeStart');
-            const endInput = document.getElementById('timeEnd');
-            formatTimecode(startInput); 
-            formatTimecode(endInput);
-
-            const isNoEndTime = document.getElementById('noEndTimecode').checked;
-            let hasError = false;
-            
-            if (startInput.value && !isValidTimecode(startInput.value)) { hasError = true; } 
-            if (!isNoEndTime && endInput.value && !isValidTimecode(endInput.value)) { hasError = true; }
-
-            if (startInput.value && endInput.value && !isNoEndTime) {
-                if (timecodeToSeconds(startInput.value) > timecodeToSeconds(endInput.value)) {
-                    alert('Ошибка! Начальный таймкод не может быть больше конечного.');
-                    startInput.classList.add('input-error');
-                    endInput.classList.add('input-error');
-                    return false;
-                }
-            }
-            
-            startInput.classList.toggle('input-error', !!(startInput.value && !isValidTimecode(startInput.value)));
-            endInput.classList.toggle('input-error', !!(!isNoEndTime && endInput.value && !isValidTimecode(endInput.value)));
-
-            return !hasError;
-        }
-        
-        function selectType(type) {
-            currentType = type;
-            document.querySelectorAll('.type-option').forEach(option => option.classList.remove('active'));
-            document.querySelector(`[data-type="${type}"]`).classList.add('active');
-
-            const elements = {
-                actionField: document.getElementById('action'),
-                actionLabel: document.getElementById('actionLabel'),
-                noEndTimeToggle: document.getElementById('no-end-timecode-toggle'),
-                timecodeRow: document.getElementById('timecodeRow'),
-                firstWordsGroup: document.getElementById('firstWordsGroup'),
-                lastWordsGroup: document.getElementById('lastWordsGroup')
-            };
-
-            // Reset to default visibility
-            elements.timecodeRow.style.display = 'grid';
-            elements.firstWordsGroup.style.display = 'block';
-            elements.lastWordsGroup.style.display = 'block';
-            elements.noEndTimeToggle.style.display = 'none';
-            document.getElementById('noEndTimecode').checked = false;
-            
-            if (type === 'cut') {
-                elements.noEndTimeToggle.style.display = 'flex';
-                elements.actionField.placeholder = 'Вырезать, сделать звук громче и т.д.';
-                elements.actionLabel.innerHTML = 'Что делаем (описание правки) <span style="color: #6c757d; font-weight: normal;">(для диапазона по умолчанию "Вырезать")</span>';
-            } else if (type === 'general') {
-                elements.timecodeRow.style.display = 'none';
-                elements.firstWordsGroup.style.display = 'none';
-                elements.lastWordsGroup.style.display = 'none';
-                elements.actionField.placeholder = 'Например: увеличить общую громкость';
-                elements.actionLabel.innerHTML = 'Описание общей правки';
-            }
-            
-            if (type !== 'general') {
-                toggleTimeEndField();
-            }
-        }
-        
-        function toggleTimeEndField() {
-            const isChecked = document.getElementById('noEndTimecode').checked;
-            document.getElementById('timeEndGroup').style.display = isChecked ? 'none' : 'block';
-            document.getElementById('lastWordsGroup').style.display = isChecked ? 'none' : 'block';
-            document.getElementById('firstWordsLabel').innerHTML = isChecked 
-                ? 'Первые три слова фрагмента <span style="color: #6c757d; font-weight: normal;">(необязательно)</span>'
-                : 'Первые три слова фрагмента';
-        }
-
-        function toggleEditMode(isEditing) {
-            const addBtn = document.getElementById('addEditBtn');
-            const cancelBtn = document.getElementById('cancelEditBtn');
-            addBtn.textContent = isEditing ? '💾 Сохранить правку' : '➕ Добавить правку';
-            addBtn.classList.toggle('btn-primary', !isEditing);
-            addBtn.classList.toggle('btn-success', isEditing);
-            cancelBtn.style.display = isEditing ? 'inline-block' : 'none';
-            currentlyEditingId = isEditing ? currentlyEditingId : null;
-        }
-
-        function cancelEdit() {
-            clearForm();
-            renderEdits();
-        }
-
-        function editEdit(id) {
-            const editData = edits.find(e => e.id === id);
-            if (!editData) return;
-
-            currentlyEditingId = id;
-            const type = editData.isGeneral ? 'general' : 'cut'; // Treat all timed edits as 'cut'
-            selectType(type);
-
-            document.getElementById('action').value = editData.action;
-
-            if (!editData.isGeneral) {
-                document.getElementById('timeStart').value = editData.timeStart || '';
-                document.getElementById('firstWords').value = editData.firstWords || '';
-                
-                const noEndTimeCheckbox = document.getElementById('noEndTimecode');
-                noEndTimeCheckbox.checked = editData.isDurationBased;
-                toggleTimeEndField();
-
-                if (!editData.isDurationBased) {
-                    document.getElementById('timeEnd').value = editData.timeEnd || '';
-                    document.getElementById('lastWords').value = editData.lastWords || '';
-                }
-            }
-            
-            toggleEditMode(true);
-            renderEdits();
-            document.querySelector('.edit-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-        
-        function addOrUpdateEdit() {
-            if (currentlyEditingId !== null) saveEdit();
-            else addEdit();
-        }
-
-        function getFormData() {
-            let action = document.getElementById('action').value.trim();
-
-            if (currentType === 'general') {
-                if (!action) { alert('Пожалуйста, заполните описание правки.'); return null; }
-                return { action, isGeneral: true, type: 'general' };
-            }
-            
-            const isNoEndTime = document.getElementById('noEndTimecode').checked;
-            
-            if (!action && !isNoEndTime) {
-                action = 'Вырезать';
-            } else if (!action) {
-                alert('Пожалуйста, заполните описание правки.');
-                return null;
-            }
-
-            if (!validateAllTimecodes()) return null;
-
-            const timeStart = document.getElementById('timeStart').value.trim();
-            const firstWords = document.getElementById('firstWords').value.trim();
-            const timeEnd = isNoEndTime ? '' : document.getElementById('timeEnd').value.trim();
-            const lastWords = isNoEndTime ? '' : document.getElementById('lastWords').value.trim();
-
-            if (!timeStart) { alert('Пожалуйста, укажите таймкод начала.'); return null; }
-            if (!isNoEndTime && !timeEnd) { alert('Пожалуйста, укажите таймкод конца.'); return null; }
-            
-            return { timeStart, timeEnd, firstWords, lastWords, action, isDurationBased: isNoEndTime, isGeneral: false, type: 'cut' };
-        }
-
-        function addEdit() {
-            const data = getFormData();
-            if (data === null) return;
-            edits.push({ id: Date.now(), ...data });
+    function deleteItem(id) {
+        if (confirm("Удалить?")) {
+            edits = edits.filter(e => e.id !== id);
+            if (editingId === id) resetForm();
             saveProject();
             renderEdits();
-            clearForm();
         }
+    }
 
-        function saveEdit() {
-            const data = getFormData();
-            if (data === null) return;
-            const editIndex = edits.findIndex(e => e.id === currentlyEditingId);
-            if (editIndex > -1) {
-                edits[editIndex] = { ...edits[editIndex], ...data };
-            }
+    function resetForm() {
+        editingId = null;
+        document.getElementById('action').value = '';
+        document.getElementById('timeStart').value = '';
+        document.getElementById('timeEnd').value = '';
+        document.getElementById('firstWords').value = '';
+        document.getElementById('lastWords').value = '';
+        document.getElementById('addBtn').textContent = "➕ Добавить";
+        document.getElementById('cancelBtn').classList.add('hidden');
+        setEditType('cut');
+    }
+
+    function clearAll() {
+        if (confirm("Очистить все?")) {
+            edits = [];
             saveProject();
             renderEdits();
-            clearForm();
         }
+    }
 
-        function clearForm() {
-            ['timeStart', 'timeEnd', 'firstWords', 'lastWords', 'action'].forEach(id => {
-                const element = document.getElementById(id);
-                if (element) element.value = '';
-            });
-            selectType('cut');
-            toggleEditMode(false);
-            document.getElementById('timeStart').focus();
+    // --- Render ---
+    function renderEdits() {
+        const list = document.getElementById('editsList');
+        document.getElementById('count').textContent = edits.length;
+        if (edits.length === 0) {
+            list.innerHTML = '<div class="empty-state">Список пуст</div>';
+            return;
         }
-        
-        function renderEdits() { 
-            const listContainer = document.getElementById('editsList');
-            const actionButtons = document.getElementById('actionButtons'); 
-            if (edits.length === 0) { 
-                listContainer.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📝</div><p>Правок пока нет.</p></div>`; 
-                actionButtons.style.display = 'none'; 
-                return; 
-            } 
-            actionButtons.style.display = 'flex'; 
-            const generalEdits = edits.filter(e => e.isGeneral); 
-            const timedEdits = edits.filter(e => !e.isGeneral).sort((a, b) => timecodeToSeconds(a.timeStart) - timecodeToSeconds(b.timeStart)); 
-            const generalHtml = generalEdits.map(edit => `
-                <div class="edit-item ${edit.id === currentlyEditingId ? 'editing' : ''} general-edit">
-                    <div class="edit-item-header">
-                        <span class="edit-number">Общая правка</span>
-                        <div class="buttons">
-                            <button class="btn btn-info" onclick="editEdit(${edit.id})">Править</button>
-                            <button class="btn btn-danger" onclick="deleteEdit(${edit.id})">Удалить</button>
+        list.innerHTML = edits.map((item) => {
+            const isGeneral = item.type === 'general';
+            const contextStr = (item.firstWords || item.lastWords) ? 
+                `<div class="card-context">${item.firstWords || ''} ... ${item.lastWords || ''}</div>` : '';
+            
+            const header = isGeneral ? `<span class="general-badge">ОБЩАЯ</span>` : 
+                `<div class="timestamp-badge">⏱ ${item.timeStart}</div>` + (item.timeEnd ? `<div class="timestamp-badge" style="margin-left:4px">➝ ${item.timeEnd}</div>` : '');
+
+            return `<div class="edit-card type-${item.type} ${item.id === editingId ? 'editing' : ''}" 
+                     onclick="${!isGeneral ? `jumpTo('${item.timeStart}')` : ''}">
+                    <div class="card-header">
+                        <div style="display:flex; align-items:center">${header}</div>
+                        <div class="card-actions">
+                            <button class="icon-btn" onclick="event.stopPropagation(); editItem(${item.id})">✏️</button>
+                            <button class="icon-btn danger" onclick="event.stopPropagation(); deleteItem(${item.id})">🗑</button>
                         </div>
                     </div>
-                    <div class="edit-content">${edit.action}</div>
-                </div>`).join(''); 
-            const timedHtml = timedEdits.map((edit, index) => { 
-                const timeDisplay = edit.isDurationBased ? `${edit.timeStart}` : `${edit.timeStart} - ${edit.timeEnd}`;
-                const wordsDisplay = `${edit.firstWords || ''}${edit.lastWords ? ' | ' + edit.lastWords : ''}`; 
-                return `
-                <div class="edit-item ${edit.id === currentlyEditingId ? 'editing' : ''}">
-                    <div class="edit-item-header">
-                        <span class="edit-number">Правка ${index + 1}</span>
-                         <div class="buttons">
-                            <button class="btn btn-info" onclick="editEdit(${edit.id})">Править</button>
-                            <button class="btn btn-danger" onclick="deleteEdit(${edit.id})">Удалить</button>
-                        </div>
-                    </div>
-                    <div class="edit-content"><strong>${timeDisplay}</strong>${wordsDisplay ? ' | ' + wordsDisplay : ''} | ${edit.action}</div>
-                </div>`; 
-            }).join(''); 
-            listContainer.innerHTML = generalHtml + timedHtml; 
-        };
-        
-        function copyToClipboard() { 
-            if (edits.length === 0) return; 
-            const projectName = document.getElementById('projectName').value.trim(); 
-            let header = projectName ? `Проект: ${projectName}\n\n` : ''; 
-            const generalEdits = edits.filter(e => e.isGeneral); 
-            const timedEdits = edits.filter(e => !e.isGeneral).sort((a, b) => timecodeToSeconds(a.timeStart) - timecodeToSeconds(b.timeStart)); 
-            let timedText = timedEdits.map((edit, index) => { 
-                const timeDisplay = edit.isDurationBased ? `${edit.timeStart}` : `${edit.timeStart} - ${edit.timeEnd}`;
-                const wordsDisplay = `${edit.firstWords ? edit.firstWords : ''}${edit.lastWords ? ' | ' + edit.lastWords : ''}`; 
-                return `${index + 1}. ${timeDisplay}${wordsDisplay ? ' | ' + wordsDisplay : ''} | ${edit.action}` 
-            }).join('\n\n'); 
-            let generalText = ''; 
-            if (generalEdits.length > 0) { 
-                generalText = '\n\n---\nОБЩИЕ ПРАВКИ:\n' + generalEdits.map(e => `- ${e.action}`).join('\n'); 
-            } 
-            navigator.clipboard.writeText(header + timedText + generalText).then(() => alert('✅ Правки скопированы в буфер обмена!')); 
-        };
+                    ${contextStr}
+                    <div class="card-text">${item.action}</div>
+                </div>`;
+        }).join('');
+    }
 
-        function exportToSrt() { 
-            if (edits.length === 0) { alert('Нет правок для экспорта.'); return; } 
-            const toSrtTime = (hms) => `${hms},000`; 
-            const generalEdits = edits.filter(e => e.isGeneral); 
-            const timedEdits = edits.filter(e => !e.isGeneral).sort((a, b) => timecodeToSeconds(a.timeStart) - timecodeToSeconds(b.timeStart)); 
-            let lastTimeInSeconds = 0; 
-            let currentIndex = 1; 
-            let srtContent = timedEdits.map(edit => { 
-                const srtStartTime = toSrtTime(edit.timeStart); 
-                let srtEndTime; let endSeconds; 
-                if (edit.isDurationBased) { endSeconds = timecodeToSeconds(edit.timeStart) + 2; } 
-                else { endSeconds = timecodeToSeconds(edit.timeEnd); } 
-                srtEndTime = toSrtTime(secondsToTimecode(endSeconds)); 
-                if (endSeconds > lastTimeInSeconds) lastTimeInSeconds = endSeconds; 
-                let textLines = [`[${edit.action}]`]; 
-                if(edit.firstWords) textLines.push(`Начало: ${edit.firstWords}`);
-                if (edit.lastWords) textLines.push(`Конец: ${edit.lastWords}`); 
-                return `${currentIndex++}\n${srtStartTime} --> ${srtEndTime}\n${textLines.join('\n')}`; 
-            }).join('\n\n'); 
-            if (generalEdits.length > 0) { 
-                if(srtContent) srtContent += '\n\n'; 
-                srtContent += generalEdits.map(edit => { 
-                    const startTime = lastTimeInSeconds + 2; 
-                    const endTime = startTime + 1; 
-                    lastTimeInSeconds = endTime; 
-                    const srtStartTime = toSrtTime(secondsToTimecode(startTime)); 
-                    const srtEndTime = toSrtTime(secondsToTimecode(endTime)); 
-                    return `${currentIndex++}\n${srtStartTime} --> ${srtEndTime}\n[ОБЩАЯ ПРАВКА]: ${edit.action}`; 
-                }).join('\n\n'); 
-            } 
-            const projectName = document.getElementById('projectName').value.trim(); 
-            const fileName = (projectName.replace(/[\s/\\?%*:|"<>]/g, '_') || 'edits') + '.srt'; 
-            const blob = new Blob([srtContent], { type: 'text/plain;charset=utf-8' }); 
-            const link = document.createElement('a'); 
-            link.href = URL.createObjectURL(blob); 
-            link.download = fileName; 
-            document.body.appendChild(link); 
-            link.click(); 
-            document.body.removeChild(link); 
-            URL.revokeObjectURL(link.href); 
-        };
-    </script>
+    function jumpTo(time) { if(time) { player.currentTime = parseTime(time); player.play(); }}
+
+    // --- Export ---
+    function copyToClipboard() {
+        const name = document.getElementById('projectName').value;
+        let text = name ? `ПРОЕКТ: ${name}\n\n` : '';
+        edits.forEach((e, i) => {
+            const prefix = e.type === 'general' ? '• ОБЩАЯ' : `${i+1}. ${e.timeStart}`;
+            text += `${prefix}: ${e.action}\n`;
+        });
+        navigator.clipboard.writeText(text).then(() => alert("Скопировано!"));
+    }
+
+    function exportSRT() {
+        let content = '', counter = 1;
+        edits.forEach(e => {
+            const start = e.type==='general' ? '00:00:00,000' : e.timeStart.replace('.', ',') + (e.timeStart.includes(',')?'':',000');
+            const end = e.type==='general' ? '00:00:05,000' : (e.timeEnd ? e.timeEnd.replace('.', ',') : formatTime(parseTime(e.timeStart)+3).replace('.',',')+',000');
+            content += `${counter++}\n${start} --> ${end}\n${e.action}\n\n`;
+        });
+        const blob = new Blob([content], {type: 'text/plain'});
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = (document.getElementById('projectName').value || 'edits') + '.srt';
+        link.click();
+    }
+
+    // --- Hotkeys ---
+    function setupHotkeys() {
+        document.addEventListener('keydown', (e) => {
+            if (['INPUT', 'TEXTAREA'].includes(e.target.tagName)) return;
+            if (e.code === 'Space') { e.preventDefault(); player.paused ? player.play() : player.pause(); }
+            if (e.code === 'KeyI') { e.preventDefault(); captureTime('timeStart'); }
+            if (e.code === 'KeyO') { e.preventDefault(); captureTime('timeEnd'); }
+        });
+    }
+    function handleEnter(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); addEdit(); } }
+
+    function saveProject() { localStorage.setItem(STORAGE_KEY, JSON.stringify({ name: document.getElementById('projectName').value, edits: edits })); }
+    function loadProject() {
+        const data = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        if (data) { document.getElementById('projectName').value = data.name || ''; edits = data.edits || []; renderEdits(); }
+    }
+    document.getElementById('projectName').addEventListener('input', saveProject);
+</script>
 </body>
 </html>
